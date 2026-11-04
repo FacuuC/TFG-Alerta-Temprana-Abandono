@@ -127,8 +127,10 @@ def main() -> int:
             "sensibilidad_alerta": round(sensibilidad_val, 4),
             **{k: (round(v, 4) if isinstance(v, float) else v) for k, v in control.items()},
         },
-        "umbral_alto": round(alto, 6),
-        "umbral_medio": round(medio, 6),
+        # Sin redondear: el umbral medio es la probabilidad exacta de un abandono, y redondearlo
+        # hacia arriba lo deja afuera (la detección bajaba de 80,0 % a 79,6 %; corregido el 04/11).
+        "umbral_alto": float(alto),
+        "umbral_medio": float(medio),
         "capacidad_tutorias": CAPACIDAD,
         "deteccion_minima": DETECCION,
         "alternativa_no_elegida": _alternativa_no_elegida(resultado),

@@ -59,8 +59,8 @@
     "proporcion_bajo": 0.6689,
     "decreciente": true
   },
-  "umbral_alto": 0.916424,
-  "umbral_medio": 0.595051,
+  "umbral_alto": 0.9164243936538696,
+  "umbral_medio": 0.5950511693954468,
   "capacidad_tutorias": 0.15,
   "deteccion_minima": 0.8,
   "alternativa_no_elegida": {
@@ -70,5 +70,15 @@
     },
     "auc_roc_validacion": 0.9128
   },
-  "prueba": null
+  "prueba": null,
+  "correccion_umbrales": {
+    "fecha": "2026-11-04T03:58:27+00:00",
+    "motivo": "Los umbrales se habían guardado redondeados a 6 decimales; se guardan los valores exactos calculados con validación. El pipeline no cambia.",
+    "anteriores": {
+      "umbral_alto": 0.916424,
+      "umbral_medio": 0.595051
+    },
+    "deteccion_validacion_antes": 0.8,
+    "deteccion_validacion_despues": 0.8
+  }
 }

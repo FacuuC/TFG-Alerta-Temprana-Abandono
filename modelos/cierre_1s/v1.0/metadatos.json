@@ -53,10 +53,20 @@
     "proporcion_bajo": 0.6294,
     "decreciente": true
   },
-  "umbral_alto": 0.893598,
-  "umbral_medio": 0.530147,
+  "umbral_alto": 0.8935980796813965,
+  "umbral_medio": 0.5301468968391418,
   "capacidad_tutorias": 0.15,
   "deteccion_minima": 0.8,
   "prueba": null,
-  "congelado_para_cuestionario": "2026-11-03"
+  "congelado_para_cuestionario": "2026-11-03",
+  "correccion_umbrales": {
+    "fecha": "2026-11-04T03:58:27+00:00",
+    "motivo": "Los umbrales se habían guardado redondeados a 6 decimales; se guardan los valores exactos calculados con validación. El pipeline no cambia.",
+    "anteriores": {
+      "umbral_alto": 0.893598,
+      "umbral_medio": 0.530147
+    },
+    "deteccion_validacion_antes": 0.7965,
+    "deteccion_validacion_despues": 0.8
+  }
 }

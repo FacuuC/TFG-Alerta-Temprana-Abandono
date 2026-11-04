@@ -54,6 +54,15 @@ cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
   estudiante con probabilidad 0,81 queda en nivel medio y uno con 0,45, en bajo. Vale
   explicarlo en el texto, porque los tutores pueden comentarlo en el cuestionario.
 
+## Evaluación final (decisiones del 04/11)
+
+- [ ] CRISP-DM, fase de evaluación: mencionar que la referencia (o la alternativa no elegida)
+  **también se informa en prueba, solo como comparación**: la elección del modelo se hizo en
+  validación antes de ver la prueba, y el modelo habilitado no cambia aunque la alternativa
+  salga mejor.
+- [ ] CRISP-DM, fase de evaluación: definir «peso alto» de una variable demográfica (estar
+  entre las 5 de mayor media |SHAP|).
+
 ## Modelado de inscripción y cierre del 2.º semestre (04/11)
 
 - [ ] Con la misma grilla, en `inscripcion` (AUC validación 0,7701 frente a 0,7673 de la
