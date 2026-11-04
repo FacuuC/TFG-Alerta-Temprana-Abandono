@@ -165,6 +165,14 @@ CORTES_EDAD: list[tuple[str, int, int]] = [
     ("más de 25", 26, 200),
 ]
 
+
+def tramo_edad(edad: float) -> str:
+    """Tramo de edad de ingreso según CORTES_EDAD («hasta 20», «21 a 25», «más de 25»)."""
+    for nombre, desde, hasta in CORTES_EDAD:
+        if desde <= edad <= hasta:
+            return nombre
+    raise ValueError(f"Edad fuera de los cortes: {edad}")
+
 # --- Mapa completo original -> plataforma (para renombrar el CSV) --------------
 MAPA_ORIGINAL_A_PLATAFORMA: dict[str, str] = {
     **{orig: nuevo for nuevo, orig in VARIABLES_INSCRIPCION.items()},

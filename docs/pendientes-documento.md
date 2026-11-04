@@ -54,6 +54,17 @@ cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
   estudiante con probabilidad 0,81 queda en nivel medio y uno con 0,45, en bajo. Vale
   explicarlo en el texto, porque los tutores pueden comentarlo en el cuestionario.
 
+## Análisis exploratorio (resultados del 04/11)
+
+- [ ] Limitaciones de los datos: los 180 estudiantes con 0 materias inscriptas en el 1.er
+  semestre son **todos** de Diseño de Animación y Multimedia (código 171; 180 de sus 215) y
+  tienen en cero las doce variables de rendimiento, aunque hay graduados entre ellos. Lo más
+  probable es que falte el registro de esa carrera en la fuente. Se mantienen sin cambios
+  (`reportes/informe_exploratorio.md`, sección 7); mencionarlo en Datos y en Conclusiones,
+  porque las estimaciones de cierre de semestre para esa carrera son menos confiables.
+- [ ] CRISP-DM, comprensión de los datos: el análisis que relaciona variables con el abandono
+  se hizo solo con entrenamiento (decisión del 04/11).
+
 ## Para las Conclusiones y la Demo (cuando haya resultados)
 
 - [ ] AUC-ROC de los tres momentos y comparación con la regresión logística.
