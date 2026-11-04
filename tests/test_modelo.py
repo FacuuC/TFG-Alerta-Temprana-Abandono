@@ -123,3 +123,30 @@ def test_principales_factores_ordenados_por_peso():
     factores = principales_factores(fila, 5)
     assert [f.variable for f in factores] == ["b", "c", "e", "a", "f"]
     assert not factores[0].aumenta_riesgo and factores[1].aumenta_riesgo
+
+
+# --- Candado del conjunto de prueba (regla 1 de CLAUDE.md) -----------------------------
+
+
+def test_prueba_sin_objetivo_por_defecto(df):
+    conjunto = P.crear_particion(df, 42)
+    prueba = P.dividir(df, conjunto, "prueba")
+    assert V.OBJETIVO not in prueba.columns and P.OBJETIVO_BINARIO not in prueba.columns
+    assert P.OBJETIVO_BINARIO in P.dividir(df, conjunto, "validacion").columns
+
+
+def test_objetivo_de_prueba_exige_confirmacion_humana(df):
+    from alerta_temprana.modelo.candado_prueba import UsoDePruebaNoAutorizado
+
+    conjunto = P.crear_particion(df, 42)
+    with pytest.raises(UsoDePruebaNoAutorizado):  # pytest no corre en una terminal interactiva
+        P.dividir(df, conjunto, "prueba", con_objetivo=True)
+
+
+def test_registro_de_usos(tmp_path):
+    from alerta_temprana.modelo.candado_prueba import registrar_uso, usos_registrados
+
+    registro = tmp_path / "uso.json"
+    assert usos_registrados(registro) == []
+    registrar_uso({"modelos": ["cierre_1s/v1.0"]}, registro)
+    assert usos_registrados(registro)[0]["modelos"] == ["cierre_1s/v1.0"]

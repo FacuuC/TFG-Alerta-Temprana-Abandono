@@ -70,6 +70,14 @@ Vienen de las correcciones del tutor. Romper una invalida resultados del documen
    elección entre modelos y umbrales se deciden **solo con validación**. La prueba se
    usa **una sola vez**, en el script de evaluación final. Si no se alcanza la meta,
    se informa así; no se reajusta.
+   - **Claude Code nunca ejecuta la evaluación final** (`scripts/evaluar_final.py`) ni
+     ningún código que lea las etiquetas de prueba: la corre Facundo a mano, desde su
+     terminal, cuando lo decide. Se puede escribir y probar el script con datos
+     sintéticos, pero no correrlo sobre el dataset.
+   - `dividir(df, conjunto, "prueba")` devuelve la prueba **sin** la variable objetivo.
+     Pedirla (`con_objetivo=True`) pasa por `modelo/candado_prueba.py`, que exige una
+     terminal interactiva y que una persona escriba «USAR PRUEBA». No esquivar el candado
+     (por ejemplo, leyendo el CSV directamente para obtener las etiquetas de prueba).
 2. **Sin información futura.** Cada modelo usa solo las variables de su momento
    (`VARIABLES_POR_MOMENTO`: 19, 25 y 31). Nada de `_s2` en `cierre_1s`.
 3. **Transformaciones ajustadas solo con entrenamiento** (one-hot, estandarización);

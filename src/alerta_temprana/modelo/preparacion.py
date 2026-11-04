@@ -65,11 +65,25 @@ def cargar_particion(ruta: Path) -> pd.Series:
     return pd.read_csv(ruta, index_col="indice_original")["conjunto"]
 
 
-def dividir(df: pd.DataFrame, conjunto: pd.Series, nombre: str) -> pd.DataFrame:
-    """Filas de un conjunto («entrenamiento», «validacion» o «prueba»)."""
+def dividir(df: pd.DataFrame, conjunto: pd.Series, nombre: str, con_objetivo: bool = False) -> pd.DataFrame:
+    """Filas de un conjunto («entrenamiento», «validacion» o «prueba»).
+
+    Para «prueba», la variable objetivo se quita salvo que se pida con `con_objetivo=True`,
+    y pedirla exige la confirmación de una persona (ver candado_prueba.py). Así, predecir
+    sobre los estudiantes de prueba (fichas, cargas simuladas) no expone sus etiquetas, y
+    la evaluación final no puede correr sin que alguien la autorice.
+    """
     if nombre not in CONJUNTOS:
         raise ValueError(f"Conjunto desconocido: {nombre}")
-    return df.loc[conjunto[conjunto == nombre].index]
+    filas = df.loc[conjunto[conjunto == nombre].index]
+    if nombre != "prueba":
+        return filas
+    if con_objetivo:
+        from alerta_temprana.modelo.candado_prueba import exigir_confirmacion_humana
+
+        exigir_confirmacion_humana("Se van a leer las etiquetas del conjunto de PRUEBA (evaluación final).")
+        return filas
+    return filas.drop(columns=[c for c in (V.OBJETIVO, OBJETIVO_BINARIO) if c in filas.columns])
 
 
 def columnas_del_momento(momento: V.Momento) -> dict[str, list[str]]:
