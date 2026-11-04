@@ -22,6 +22,7 @@ import sys
 
 from sklearn.metrics import precision_score, recall_score
 
+from alerta_temprana import formato as F
 from alerta_temprana.config import RAIZ
 from alerta_temprana.datos import variables as V
 from alerta_temprana.modelo import preparacion as P
@@ -38,12 +39,48 @@ RUTA_DATOS = RAIZ / "data" / "raw" / "data.csv"
 RUTA_PARTICION = RAIZ / "data" / "procesados" / "particion.csv"
 
 
-def _pct(x: float) -> str:
-    return f"{x * 100:.1f} %".replace(".", ",")
+_pct = F.porcentaje
+_num = F.decimal
 
 
-def _num(x: float, d: int = 4) -> str:
-    return f"{x:.{d}f}".replace(".", ",")
+def _alternativa_no_elegida(resultado) -> dict:
+    """El candidato que no se eligió (la referencia o el mejor XGBoost), para informarlo en prueba."""
+    mejor_xgb = max(resultado.grilla, key=lambda c: c.auc_validacion)
+    alternativa = resultado.referencia if resultado.elegido is mejor_xgb else mejor_xgb
+    return {
+        "algoritmo": alternativa.algoritmo,
+        "hiperparametros": alternativa.hiperparametros,
+        "auc_roc_validacion": round(alternativa.auc_validacion, 4),
+    }
+
+
+def _aviso_borde(resultado) -> list[str]:
+    """Si el mejor XGBoost queda en un extremo de la grilla, se informa (no se extiende la grilla)."""
+    mejor = max(resultado.grilla, key=lambda c: c.auc_validacion).hiperparametros
+    en_borde = [
+        f"{clave} = {mejor[clave]}"
+        for clave, valores in GRILLA_XGBOOST.items()
+        if mejor[clave] in (min(valores), max(valores))
+    ]
+    if not en_borde:
+        return ["El mejor XGBoost quedó dentro de la grilla (ningún hiperparámetro en un extremo)."]
+    return [
+        f"El mejor XGBoost quedó en el borde de la grilla en: {', '.join(en_borde)}. Se informa y no se",
+        "extiende la grilla, para usar la misma en los tres momentos.",
+    ]
+
+
+def _parrafo_grilla(momento: V.Momento) -> list[str]:
+    if momento is V.Momento.CIERRE_1S:
+        return [
+            "La primera grilla (profundidad 3 a 5, tasa 0,05 y 0,1, 200 y 400 árboles) dejó su mejor",
+            "resultado en el borde (profundidad 3, 200 árboles, tasa 0,1; AUC-ROC 0,8833, por debajo de la",
+            "referencia). Por eso se extendió hacia modelos más simples. La regla de elección no cambió.",
+        ]
+    return [
+        "Se usa la misma grilla que en el cierre del 1.er semestre (extendida el 03/11, antes de entrenar",
+        "este momento), sin cambios: la grilla es la misma para los tres momentos.",
+    ]
 
 
 def main() -> int:
@@ -94,6 +131,7 @@ def main() -> int:
         "umbral_medio": round(medio, 6),
         "capacidad_tutorias": CAPACIDAD,
         "deteccion_minima": DETECCION,
+        "alternativa_no_elegida": _alternativa_no_elegida(resultado),
         "prueba": None,  # lo completa scripts/evaluar_final.py
     }
     carpeta = guardar_modelo(RAIZ / "modelos", momento, args.version, elegido.pipeline, metadatos)
@@ -125,9 +163,9 @@ def main() -> int:
         f"({'supera' if elegido.algoritmo == 'xgboost' else 'XGBoost no supera'} a la referencia).",
         f"Hiperparámetros: `{json.dumps(elegido.hiperparametros)}`.",
         "",
-        "La primera grilla (profundidad 3 a 5, tasa 0,05 y 0,1, 200 y 400 árboles) dejó su mejor",
-        "resultado en el borde (profundidad 3, 200 árboles, tasa 0,1; AUC-ROC 0,8833, por debajo de la",
-        "referencia). Por eso se extendió hacia modelos más simples. La regla de elección no cambió.",
+        *_parrafo_grilla(momento),
+        "",
+        *_aviso_borde(resultado),
         "",
         f"### Grilla de XGBoost ({len(resultado.grilla)} combinaciones: "
         + ", ".join(f"{k} {v}" for k, v in GRILLA_XGBOOST.items())

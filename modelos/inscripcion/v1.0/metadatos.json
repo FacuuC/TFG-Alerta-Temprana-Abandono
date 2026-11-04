@@ -1,0 +1,62 @@
+{
+  "version": "1.0",
+  "momento": "inscripcion",
+  "fecha": "2026-11-04T03:44:05+00:00",
+  "variables": [
+    "estado_civil",
+    "nacionalidad",
+    "desplazado",
+    "genero",
+    "edad_ingreso",
+    "internacional",
+    "nivel_educ_madre",
+    "nivel_educ_padre",
+    "ocupacion_madre",
+    "ocupacion_padre",
+    "becario",
+    "tasa_desempleo",
+    "tasa_inflacion",
+    "variacion_pib",
+    "modalidad_ingreso",
+    "carrera",
+    "turno_diurno",
+    "titulo_previo",
+    "nota_titulo_previo"
+  ],
+  "habilitado": false,
+  "algoritmo": "xgboost",
+  "hiperparametros": {
+    "max_depth": 2,
+    "learning_rate": 0.1,
+    "n_estimators": 200,
+    "scale_pos_weight": 2.115
+  },
+  "semilla": 42,
+  "particion": "data/procesados/particion.csv (60/20/20 estratificada)",
+  "validacion": {
+    "auc_roc": 0.7701,
+    "auc_roc_referencia": 0.7673,
+    "precision_alerta": 0.4946,
+    "sensibilidad_alerta": 0.8,
+    "proporcion_alto": 0.1492,
+    "deteccion_alto_medio": 0.8,
+    "tasa_abandono_alto": 0.6591,
+    "tasa_abandono_medio": 0.4286,
+    "tasa_abandono_bajo": 0.1344,
+    "proporcion_medio": 0.3718,
+    "proporcion_bajo": 0.4791,
+    "decreciente": true
+  },
+  "umbral_alto": 0.729279,
+  "umbral_medio": 0.424072,
+  "capacidad_tutorias": 0.15,
+  "deteccion_minima": 0.8,
+  "alternativa_no_elegida": {
+    "algoritmo": "regresion_logistica",
+    "hiperparametros": {
+      "class_weight": "balanced"
+    },
+    "auc_roc_validacion": 0.7673
+  },
+  "prueba": null
+}

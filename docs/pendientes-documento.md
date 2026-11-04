@@ -54,6 +54,14 @@ cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
   estudiante con probabilidad 0,81 queda en nivel medio y uno con 0,45, en bajo. Vale
   explicarlo en el texto, porque los tutores pueden comentarlo en el cuestionario.
 
+## Modelado de inscripción y cierre del 2.º semestre (04/11)
+
+- [ ] Con la misma grilla, en `inscripcion` (AUC validación 0,7701 frente a 0,7673 de la
+  regresión logística) y en `cierre_2s` (0,9147 frente a 0,9128) XGBoost supera a la
+  referencia por muy poco, y el óptimo vuelve a quedar en el borde (profundidad 2, tasa 0,1),
+  como en `cierre_1s`. No se extendió la grilla (misma para los tres momentos). Comentarlo
+  junto con el empate de `cierre_1s`: con estos datos, modelos simples rinden casi igual.
+
 ## Análisis exploratorio (resultados del 04/11)
 
 - [ ] Limitaciones de los datos: los 180 estudiantes con 0 materias inscriptas en el 1.er
