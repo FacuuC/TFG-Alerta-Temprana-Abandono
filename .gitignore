@@ -1,0 +1,28 @@
+# Secretos
+.env
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Datos: el dataset es público y se descarga con scripts/descargar_datos.py
+data/raw/*
+data/procesados/*
+data/cargas/*
+!data/**/.gitkeep
+
+# Respaldos de la base (pueden tener datos)
+respaldos/
+
+# Sistema / editores
+.DS_Store
+Thumbs.db
+*.log

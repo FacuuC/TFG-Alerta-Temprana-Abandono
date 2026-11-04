@@ -1,0 +1,10 @@
+# Solo para desarrollo: publica la base en 127.0.0.1 para usarla desde el
+# entorno virtual (scripts, notebooks y uvicorn --reload).
+# Uso: docker compose -f compose.yaml -f compose.dev.yaml up -d db
+services:
+  db:
+    ports:
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    networks:
+      - interna
+      - frontal

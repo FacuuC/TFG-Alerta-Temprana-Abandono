@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "alerta-temprana"
+version = "0.1.0"
+description = "Prototipo de plataforma de alerta temprana del riesgo de abandono universitario (TFG)"
+requires-python = ">=3.12"
+# Las dependencias se instalan desde requirements.txt (una sola lista para local y Docker).
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = [
+    "datos: requiere el dataset descargado en data/raw/data.csv",
+    "db: requiere PostgreSQL en ejecución",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+# El formateador ya ajusta el código a 110; quedan largos solo textos y mensajes.
+ignore = ["E501"]

@@ -1,0 +1,7 @@
+# Desarrollo local: aplicación + pruebas + notebooks.
+-r requirements.txt
+-e .
+pytest==9.2.0
+httpx==0.28.1
+ipykernel==7.4.0
+ruff==0.17.3

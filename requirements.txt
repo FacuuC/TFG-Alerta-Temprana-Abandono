@@ -1,0 +1,20 @@
+# Dependencias de la aplicación (las usa también la imagen de Docker).
+# Versiones fijas, probadas el 03/11/2026 con Python 3.13 (pruebas en verde) y con
+# ruedas disponibles para Windows (win_amd64) y Linux. Para actualizarlas: cambiar
+# a rangos, reinstalar, correr pytest y volver a fijar con scripts/fijar_versiones.py.
+pandas==3.1.0
+numpy==2.5.4
+scikit-learn==1.9.1
+xgboost==3.4.1
+shap==0.54.1
+joblib==1.6.0
+matplotlib==3.11.2
+fastapi==0.162.0
+uvicorn==0.54.0
+python-multipart==0.0.33
+dash==3.4.0
+dash-bootstrap-components==2.0.4
+a2wsgi==1.10.10
+sqlalchemy==2.1.6
+psycopg[binary]==3.3.6
+pydantic-settings==2.16.2
