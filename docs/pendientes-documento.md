@@ -63,6 +63,39 @@ cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
 - [ ] CRISP-DM, fase de evaluación: definir «peso alto» de una variable demográfica (estar
   entre las 5 de mayor media |SHAP|).
 
+## Evaluación final (resultados del 04/11, `reportes/informe_evaluacion.md`)
+
+- [ ] **Umbrales en prueba (HU-004, criterio 5): no alcanzado.** Se informa tal cual, sin
+  reajustar (decisión del 04/11). La proporción de abandonos decrece de alto a bajo en los
+  tres momentos, pero:
+
+  | Momento | Nivel alto (≤ 15 %) | Detección alto + medio (≥ 80 %) |
+  |---|---|---|
+  | Inscripción | 13,2 % (sí) | 79,2 % (no) |
+  | Cierre del 1.er semestre | 15,1 % (no) | 74,6 % (no) |
+  | Cierre del 2.º semestre | 15,5 % (no) | 76,1 % (no) |
+
+  Explicar en Conclusiones que los umbrales se fijan en validación (donde detectan el 80,0 %)
+  y que en prueba la detección baja; en la plataforma conviene presentar la capacidad y la
+  detección como metas aproximadas, no garantizadas.
+- [ ] **Subgrupos (cierre_1s):** el AUC-ROC es parejo (0,84 a 0,93), pero la sensibilidad no:
+  hasta 20 años 0,564 frente a más de 25 años 0,893; becarios 0,536 frente a no becarios
+  0,770; femenino 0,683 frente a masculino 0,810. La edad de ingreso es la 2.ª variable de
+  mayor peso SHAP (única demográfica con «peso alto»). Comentarlo como riesgo de sesgo: el
+  modelo deja sin alerta a una parte mayor de los abandonos de jóvenes y becarios.
+- [ ] **Comparación con la referencia en prueba (solo informativa):** XGBoost supera a la
+  regresión logística en los tres momentos (inscripción 0,7861 frente a 0,7752; cierre_1s
+  0,8928 frente a 0,8838; cierre_2s 0,9177 frente a 0,9159).
+- [ ] **Anticipación frente a precisión:** AUC-ROC 0,7861 (inscripción), 0,8928 (cierre del
+  1.er semestre, meta > 0,80 alcanzada) y 0,9177 (cierre del 2.º semestre); los tres
+  habilitados. Sin «sigue cursando», el AUC-ROC de cierre_1s sube a 0,9255.
+- [ ] **Fecha de entrenamiento del informe en UTC:** la columna «Entrenado» del informe
+  muestra la fecha UTC de `metadatos.json` (cierre_1s: `2026-11-04T00:01:28+00:00`, que es
+  el **03/11 a las 21:01, hora argentina**, coherente con el congelamiento del 03/11). Si se
+  cita en el documento, aclararlo. El informe actual no se modifica (regenerarlo volvería a
+  usar la prueba); `informe_evaluacion.py` ya muestra dd/mm/aaaa en hora argentina para
+  futuras evaluaciones.
+
 ## Modelado de inscripción y cierre del 2.º semestre (04/11)
 
 - [ ] Con la misma grilla, en `inscripcion` (AUC validación 0,7701 frente a 0,7673 de la

@@ -51,7 +51,7 @@ def armar_informe(r: ResultadoEvaluacion) -> str:
     else:
         L += [f"# {TITULO}", ""]
     L += [
-        f"Generado por `scripts/evaluar_final.py` el **{F.fecha_hora(r.fecha)}** "
+        f"Generado por `scripts/evaluar_final.py` el **{F.fecha_hora(F.hora_argentina(r.fecha))}** (hora argentina) "
         f"(tareas 2.4 y 2.5; CRISP-DM, fase 5, etapa B). Conjunto evaluado: **{conj}** "
         f"({F.entero(r.momentos[0].metricas['n'])} estudiantes, {F.entero(r.momentos[0].metricas['abandonos'])} abandonos).",
         "",
@@ -70,10 +70,10 @@ def armar_informe(r: ResultadoEvaluacion) -> str:
     # 1. Modelos
     L += ["## 1. Modelos evaluados", ""]
     L += _tabla(
-        ["Momento", "Versión", "Algoritmo", "Hiperparámetros", "Entrenado", "SHA-256 de `pipeline.joblib`"],
+        ["Momento", "Versión", "Algoritmo", "Hiperparámetros", "Entrenado (hora argentina)", "SHA-256 de `pipeline.joblib`"],
         [
             [V.ETIQUETA_MOMENTO[m.momento], m.version, NOMBRE_ALGORITMO[m.algoritmo],
-             f"`{json.dumps(m.hiperparametros)}`", m.fecha_entrenamiento[:10], f"`{m.sha256[:16]}…`"]
+             f"`{json.dumps(m.hiperparametros)}`", F.fecha(F.hora_argentina(m.fecha_entrenamiento)), f"`{m.sha256[:16]}…`"]
             for m in r.momentos
         ],
     )

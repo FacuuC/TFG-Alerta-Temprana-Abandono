@@ -35,7 +35,7 @@
     "nota_promedio_s2",
     "materias_sin_evaluacion_s2"
   ],
-  "habilitado": false,
+  "habilitado": true,
   "algoritmo": "xgboost",
   "hiperparametros": {
     "max_depth": 2,
@@ -70,7 +70,38 @@
     },
     "auc_roc_validacion": 0.9128
   },
-  "prueba": null,
+  "prueba": {
+    "fecha_evaluacion": "2026-11-04T01:07:03-03:00",
+    "n": 885,
+    "abandonos": 284,
+    "auc_roc": 0.9177,
+    "precision_alerta": 0.806,
+    "sensibilidad_alerta": 0.7606,
+    "verdaderos_positivos": 216,
+    "falsos_positivos": 52,
+    "falsos_negativos": 68,
+    "verdaderos_negativos": 549,
+    "proporcion_alto": 0.1548,
+    "deteccion_alto_medio": 0.7606,
+    "tasa_abandono_alto": 0.9781,
+    "tasa_abandono_medio": 0.626,
+    "tasa_abandono_bajo": 0.1102,
+    "proporcion_medio": 0.148,
+    "proporcion_bajo": 0.6972,
+    "decreciente": true,
+    "alternativa_no_elegida": {
+      "algoritmo": "regresion_logistica",
+      "n": 885,
+      "abandonos": 284,
+      "auc_roc": 0.9159,
+      "precision_alerta": 0.7862,
+      "sensibilidad_alerta": 0.7641,
+      "verdaderos_positivos": 217,
+      "falsos_positivos": 59,
+      "falsos_negativos": 67,
+      "verdaderos_negativos": 542
+    }
+  },
   "correccion_umbrales": {
     "fecha": "2026-11-04T03:58:27+00:00",
     "motivo": "Los umbrales se habían guardado redondeados a 6 decimales; se guardan los valores exactos calculados con validación. El pipeline no cambia.",
@@ -80,5 +111,8 @@
     },
     "deteccion_validacion_antes": 0.8,
     "deteccion_validacion_despues": 0.8
-  }
+  },
+  "motivo_habilitacion": "Se habilita con el desempeño obtenido (AUC-ROC en prueba 0,9177), que queda informado.",
+  "fecha_evaluacion": "2026-11-04T01:07:03-03:00",
+  "sha256_pipeline": "dc737546a69ec77d81f435cbf85d305c1caefab600f42a8b0b31d4ff0d1a2618"
 }

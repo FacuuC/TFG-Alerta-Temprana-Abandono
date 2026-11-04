@@ -1,0 +1,33 @@
+[
+  {
+    "fecha": "2026-11-04T04:07:10+00:00",
+    "modelos": [
+      "inscripcion/v1.0",
+      "cierre_1s/v1.0",
+      "cierre_2s/v1.0"
+    ],
+    "sha256": {
+      "inscripcion": "d0ca7ddeca8eb481524ac3bdbc4a7e0c4d96bfe527934d0cf81df7e017c78f38",
+      "cierre_1s": "fd37e9f99a4ac0f6cffe708029e6cf128753ff14f000603efe6d634d97aa8752",
+      "cierre_2s": "dc737546a69ec77d81f435cbf85d305c1caefab600f42a8b0b31d4ff0d1a2618"
+    },
+    "motivo_repeticion": null,
+    "estado": "iniciado"
+  },
+  {
+    "fecha": "2026-11-04T04:07:11+00:00",
+    "modelos": [
+      "inscripcion/v1.0",
+      "cierre_1s/v1.0",
+      "cierre_2s/v1.0"
+    ],
+    "sha256": {
+      "inscripcion": "d0ca7ddeca8eb481524ac3bdbc4a7e0c4d96bfe527934d0cf81df7e017c78f38",
+      "cierre_1s": "fd37e9f99a4ac0f6cffe708029e6cf128753ff14f000603efe6d634d97aa8752",
+      "cierre_2s": "dc737546a69ec77d81f435cbf85d305c1caefab600f42a8b0b31d4ff0d1a2618"
+    },
+    "motivo_repeticion": null,
+    "estado": "completado",
+    "informe": "reportes/informe_evaluacion.md"
+  }
+]

@@ -460,3 +460,14 @@ def test_criterio_5_metadatos_reales_despues_de_la_prueba(momento):
         assert meta["habilitado"] == (meta["prueba"]["auc_roc"] > 0.80)
     else:
         assert meta["habilitado"] is True
+
+
+def test_fechas_del_informe_en_hora_argentina():
+    """La fecha de entrenamiento se guarda en UTC; el informe la muestra dd/mm/aaaa en hora argentina."""
+    from datetime import datetime
+
+    assert F.fecha(F.hora_argentina("2026-11-04T00:01:28+00:00")) == "03/11/2026"
+    assert F.fecha_hora(F.hora_argentina("2026-11-04T00:01:28+00:00")) == "03/11/2026 21:01"
+    assert F.hora_argentina(datetime(2026, 11, 5, 10, 30)) == datetime(2026, 11, 5, 10, 30)  # sin zona: ya local
+    texto = armar_informe(_resultado_simulado())  # entrenado «2026-11-04T00:00:00+00:00»
+    assert "03/11/2026" in texto and "2026-11-04" not in texto

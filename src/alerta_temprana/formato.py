@@ -4,6 +4,22 @@ from __future__ import annotations
 
 import math
 from datetime import date, datetime
+from zoneinfo import ZoneInfo
+
+ZONA_ARGENTINA = ZoneInfo("America/Argentina/Buenos_Aires")
+
+
+def hora_argentina(valor: datetime | str) -> datetime:
+    """Pasa una fecha con zona horaria (o su texto ISO) a la hora argentina.
+
+    Los metadatos guardan las fechas en UTC («2026-11-04T00:01:28+00:00» es el 03/11 a
+    las 21:01 en Argentina). Una fecha sin zona se toma como ya expresada en hora argentina.
+    """
+    if isinstance(valor, str):
+        valor = datetime.fromisoformat(valor)
+    if valor.tzinfo is None:
+        return valor
+    return valor.astimezone(ZONA_ARGENTINA)
 
 
 def decimal(valor: float, decimales: int = 4) -> str:

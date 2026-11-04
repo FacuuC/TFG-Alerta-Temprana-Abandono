@@ -29,7 +29,7 @@
     "nota_promedio_s1",
     "materias_sin_evaluacion_s1"
   ],
-  "habilitado": false,
+  "habilitado": true,
   "algoritmo": "xgboost",
   "hiperparametros": {
     "max_depth": 2,
@@ -57,7 +57,42 @@
   "umbral_medio": 0.5301468968391418,
   "capacidad_tutorias": 0.15,
   "deteccion_minima": 0.8,
-  "prueba": null,
+  "prueba": {
+    "fecha_evaluacion": "2026-11-04T01:07:03-03:00",
+    "n": 885,
+    "abandonos": 284,
+    "auc_roc": 0.8928,
+    "precision_alerta": 0.7162,
+    "sensibilidad_alerta": 0.7465,
+    "verdaderos_positivos": 212,
+    "falsos_positivos": 84,
+    "falsos_negativos": 72,
+    "verdaderos_negativos": 517,
+    "proporcion_alto": 0.1514,
+    "deteccion_alto_medio": 0.7465,
+    "tasa_abandono_alto": 0.9552,
+    "tasa_abandono_medio": 0.5185,
+    "tasa_abandono_bajo": 0.1222,
+    "proporcion_medio": 0.1831,
+    "proporcion_bajo": 0.6655,
+    "decreciente": true,
+    "alternativa_no_elegida": {
+      "algoritmo": "regresion_logistica",
+      "n": 885,
+      "abandonos": 284,
+      "auc_roc": 0.8838,
+      "precision_alerta": 0.6981,
+      "sensibilidad_alerta": 0.757,
+      "verdaderos_positivos": 215,
+      "falsos_positivos": 93,
+      "falsos_negativos": 69,
+      "verdaderos_negativos": 508
+    },
+    "auc_roc_con_cursando": 0.8928,
+    "auc_roc_sin_cursando": 0.9255,
+    "n_con_cursando": 885,
+    "n_sin_cursando": 741
+  },
   "congelado_para_cuestionario": "2026-11-03",
   "correccion_umbrales": {
     "fecha": "2026-11-04T03:58:27+00:00",
@@ -68,5 +103,8 @@
     },
     "deteccion_validacion_antes": 0.7965,
     "deteccion_validacion_despues": 0.8
-  }
+  },
+  "motivo_habilitacion": "AUC-ROC en prueba 0,8928 > 0,80: alcanza la meta y se habilita.",
+  "fecha_evaluacion": "2026-11-04T01:07:03-03:00",
+  "sha256_pipeline": "fd37e9f99a4ac0f6cffe708029e6cf128753ff14f000603efe6d634d97aa8752"
 }
