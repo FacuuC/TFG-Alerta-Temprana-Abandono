@@ -39,6 +39,26 @@ def cargar_dataset(ruta_csv: Path) -> pd.DataFrame:
     return df
 
 
+def cargar_variables_sin_objetivo(ruta_csv: Path) -> pd.DataFrame:
+    """Lee el CSV de UCI **sin** la columna Target (no se lee de disco).
+
+    Para tareas que no necesitan la situación final, como los controles de rango o los
+    archivos de carga simulados (HU-001): así nunca se leen las etiquetas de prueba. El
+    índice es `indice_original`, como en `cargar_dataset`.
+    """
+    encabezado = pd.read_csv(ruta_csv, sep=";", encoding="utf-8-sig", nrows=0).columns
+    columnas = [c for c in encabezado if V.normalizar_nombre(c) != V.OBJETIVO_ORIGINAL]
+    df = pd.read_csv(ruta_csv, sep=";", encoding="utf-8-sig", usecols=columnas)
+    nombres = {}
+    for columna in df.columns:
+        clave = V.normalizar_nombre(columna)
+        clave = "nacionality" if clave == "nationality" else clave
+        nombres[columna] = V.MAPA_ORIGINAL_A_PLATAFORMA[clave]
+    df = df.rename(columns=nombres)
+    df.index.name = "indice_original"
+    return df
+
+
 def crear_particion(df: pd.DataFrame, semilla: int) -> pd.Series:
     """Partición estratificada 60/20/20 por la variable binaria. Devuelve el conjunto de cada registro."""
     indices = df.index.to_numpy()

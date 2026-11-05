@@ -76,6 +76,43 @@ docker compose -f compose.yaml -f compose.dev.yaml up -d db
 uvicorn alerta_temprana.app:app --reload
 ```
 
+## Datos para la Demo: base vacía y tres cargas en orden
+
+Es el primer paso de cada verificación manual desde HU-003 y de la Demo: se parte de una
+base vacía y se cargan los tres archivos simulados en orden, para que el riesgo se calcule
+como en un año académico real. **Vaciar la base borra todo** (cargas, estudiantes,
+predicciones, alertas y seguimiento).
+
+```powershell
+# 1. Vaciar la base (borra el volumen datos_db). En la versión con Docker completa:
+#    docker compose down -v ; docker compose up -d --build
+docker compose -f compose.yaml -f compose.dev.yaml down -v
+docker compose -f compose.yaml -f compose.dev.yaml up -d db
+
+# 2. Archivos simulados: estudiantes del conjunto de prueba, sin situación final
+python scripts/generar_cargas.py
+
+# 3. Aplicación (al iniciar crea las tablas y los usuarios de prueba)
+uvicorn alerta_temprana.app:app --reload
+```
+
+4. En http://127.0.0.1:8000, con el usuario «Área de Sistemas (sistemas01)», en «Carga de
+   datos», cargar **en este orden**, cada uno con su momento de predicción:
+   1. `data/cargas/exportacion_inscripcion.csv` → «Inscripción»;
+   2. `data/cargas/exportacion_cierre_1s.csv` → «Cierre del 1.er semestre»;
+   3. `data/cargas/exportacion_cierre_2s.csv` → «Cierre del 2.º semestre».
+
+   Cada carga da 885 registros válidos y 0 rechazados. Lo mismo por la API:
+
+   ```powershell
+   curl.exe -F "archivo=@data/cargas/exportacion_inscripcion.csv" -F momento=inscripcion -F usuario=sistemas01 http://127.0.0.1:8000/api/cargas
+   curl.exe -F "archivo=@data/cargas/exportacion_cierre_1s.csv" -F momento=cierre_1s -F usuario=sistemas01 http://127.0.0.1:8000/api/cargas
+   curl.exe -F "archivo=@data/cargas/exportacion_cierre_2s.csv" -F momento=cierre_2s -F usuario=sistemas01 http://127.0.0.1:8000/api/cargas
+   ```
+
+No cargues los archivos de `tests/fixtures/` en esta base: son estudiantes sintéticos de
+prueba y aparecerían en el listado.
+
 ## Estructura
 
 ```

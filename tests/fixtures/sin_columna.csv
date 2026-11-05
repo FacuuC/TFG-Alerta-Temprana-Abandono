@@ -1,0 +1,11 @@
+legajo;documento;apellido_nombre;estado_civil;nacionalidad;desplazado;genero;edad_ingreso;internacional;nivel_educ_madre;nivel_educ_padre;ocupacion_madre;ocupacion_padre;becario;tasa_desempleo;tasa_inflacion;variacion_pib;modalidad_ingreso;turno_diurno;titulo_previo;nota_titulo_previo;necesidades_especiales;deudor;aranceles_al_dia;orden_postulacion;nota_admision
+T0001;99000001;Estudiante de prueba 01;1;1;1;0;24;0;19;1;191;0;1;7.6;-0.8;-4.06;17;0;39;102.1;0;0;1;6;152.0
+T0002;99000002;Estudiante de prueba 02;2;1;1;0;23;0;37;1;0;9;0;13.9;1.4;1.74;1;0;1;177.8;0;1;1;1;144.2
+T0003;99000003;Estudiante de prueba 03;1;1;1;1;31;0;37;19;5;7;0;13.9;-0.8;0.32;17;1;1;121.6;0;0;1;6;125.9
+T0004;99000004;Estudiante de prueba 04;4;1;0;1;29;0;38;19;5;5;0;13.9;3.7;3.51;39;1;39;139.5;0;0;1;1;112.2
+T0005;99000005;Estudiante de prueba 05;4;1;0;1;37;0;37;1;5;9;0;16.2;-0.8;1.74;17;0;1;167.3;0;0;1;2;129.9
+T0006;99000006;Estudiante de prueba 06;1;1;0;0;35;0;1;1;9;0;0;10.8;3.7;0.32;39;1;39;160.4;0;0;1;6;124.9
+T0007;99000007;Estudiante de prueba 07;1;1;0;0;17;0;1;1;4;0;0;13.9;-0.8;0.32;39;1;39;110.6;0;1;1;2;162.8
+T0008;99000008;Estudiante de prueba 08;1;1;0;1;40;0;37;1;4;5;0;16.2;0.6;3.51;17;1;1;170.0;0;0;1;4;164.6
+T0009;99000009;Estudiante de prueba 09;1;1;1;1;32;0;19;38;0;5;1;7.6;3.7;1.74;43;1;39;176.6;0;1;1;2;115.2
+T0010;99000010;Estudiante de prueba 10;2;1;0;0;22;0;1;1;4;9;0;10.8;-0.8;-4.06;43;1;1;153.6;0;1;1;2;121.2

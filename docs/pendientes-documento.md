@@ -115,6 +115,28 @@ cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
 - [ ] CRISP-DM, comprensión de los datos: el análisis que relaciona variables con el abandono
   se hizo solo con entrenamiento (decisión del 04/11).
 
+## Carga de datos (HU-001, 04/11)
+
+- [ ] **Seguridad: el selector de usuario no es un control de acceso.** En el Sprint 1 no
+  hay inicio de sesión: cualquiera que abra la plataforma puede elegir otro usuario de
+  prueba. El rol solo se controla para que la carga quede registrada a nombre del Área de
+  Sistemas (decisión P5); el control de acceso real es HU-009 (Sprint 2). Declararlo en la
+  sección Seguridad y en las limitaciones del prototipo.
+- [ ] **Informe de errores sin guardar:** se descarga al terminar la carga y no se guarda en
+  la base (CARGA no tiene un campo para él y así se respeta la minimización). Si se sale de
+  la pantalla, no se puede volver a descargar. Declararlo como limitación.
+- [ ] **Datos ya cargados no se actualizan:** si una exportación posterior trae datos de
+  inscripción o de un semestre ya cargado con otros valores (una corrección), la corrección no
+  entra (no hay edición de datos cargados, fuera de alcance). Declararlo como limitación.
+- [ ] **Nota promedio redondeada (Tabla 32, NUMERIC(4,2)):** el archivo de UCI tiene notas
+  del semestre con más decimales (1.790 del 1.er semestre); la base las guarda con 2. Medido
+  el 04/11 con los modelos v1.0: la probabilidad cambia como máximo 0,09 en un estudiante de
+  validación, **ningún nivel cambia** (0 de 885 en validación y en prueba, en los tres
+  momentos) y las 6 fichas dan las mismas probabilidades con 4 decimales. Se mantiene el tipo
+  del documento; mencionarlo si se describe el diccionario de datos.
+- [ ] Figura 5: la pantalla real agrega «Estudiantes nuevos», «Ya existentes» y
+  «Rendimientos semestrales agregados», y lista las columnas descartadas.
+
 ## Para las Conclusiones y la Demo (cuando haya resultados)
 
 - [ ] AUC-ROC de los tres momentos y comparación con la regresión logística.
