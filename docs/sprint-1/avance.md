@@ -14,6 +14,7 @@ terminar cada historia, sumar una fila. Puntos totales: 45.
 
 | 04/11 | HU-001: tareas 1.2, 1.3 y 1.4 | En progreso | 13 | 32 | Tablas del DER, validación, seudonimización, servicio, API, pantalla de carga y 3 archivos simulados (885 válidos, 0 rechazados cada uno). P2 y P5 confirmadas. 144 pruebas en verde y 1 `xfail` (códigos de las fichas, ver pendientes). Falta: verificación manual de la pantalla, `/revisar-hu` y commit |
 | 05/11 | HU-001: verificación manual | En progreso | 13 | 32 | Las 5 pruebas manuales de la pantalla pasaron (Facundo). Se mantiene la `SEUDONIMO_CLAVE` actual: se quitó la prueba de los códigos de las fichas. 144 pruebas en verde. Falta: `/revisar-hu` y commit |
+| 05/11 | Decisión del tutor: el cuestionario no se aplica | — | 13 | 32 | El instrumento (formulario y 6 fichas) va al Anexo; el objetivo 4 se informa con lo que se entrega (ver `08-decisiones.md`, 05/11). La tarea 6.4 queda sin aplicación ni análisis |
 | 05/11 | HU-001 | Terminada | 21 | 24 | Criterios 1 a 5 cumplidos (revisión con evidencia); verificación manual de la pantalla en verde; 144 pruebas en verde. La base de desarrollo no se vacía ahora: es el primer paso de la verificación de HU-003 (`README.md`, «Datos para la Demo») |
 
 ### Verificación manual de la pantalla de carga (HU-001)

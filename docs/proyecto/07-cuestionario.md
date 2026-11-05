@@ -1,14 +1,21 @@
 # Cuestionario a tutores y docentes (Objetivo específico 4)
 
 Fuente: Recolección de Datos del documento y bloque 4.2 del «Paquete de cambios E3».
-El instrumento **ya está definido**; lo que falta son las seis fichas, que salen del
-modelo de `cierre_1s`.
+
+> **Decisión del 05/11 (tutor): el cuestionario no se aplica.** El instrumento (este
+> formulario y las seis fichas de `reportes/cuestionario/`) va en el **Anexo**: «se valida
+> la forma, no el contenido». El objetivo 4 no se reformula: se informa lo que se entrega,
+> el instrumento listo para aplicar y sin resultados de valoración, con el mismo criterio
+> que HU-004, criterio 5. La aplicación queda como paso siguiente. Por eso no rigen la
+> ventana de aplicación, el mínimo de evaluadores ni la regla de análisis de este archivo:
+> se conservan como descripción del instrumento. Ver `08-decisiones.md` (05/11).
 
 ## Diseño
 
 - **Participantes:** tutores y docentes con experiencia en el acompañamiento de
-  estudiantes, a los que el autor tiene acceso. Mínimo **5 evaluadores**. Muestra no
-  probabilística: los resultados son una validación inicial y no se generalizan.
+  estudiantes, a los que el autor tiene acceso. Mínimo **5 evaluadores** *(sin efecto
+  desde el 05/11: el cuestionario no se aplica)*. Muestra no probabilística: los
+  resultados serían una validación inicial y no se generalizarían.
 - **Casos:** las fichas de **6 estudiantes del conjunto de prueba, 2 por nivel de
   urgencia** (alto, medio, bajo), generadas por el modelo del cierre del 1.er semestre.
   Cada ficha muestra la probabilidad, el nivel y los cinco factores que más pesan, en
@@ -17,7 +24,8 @@ modelo de `cierre_1s`.
   y con qué prioridad.
 - **Ventana de aplicación:** el documento dice del 28/10 al 4/11. Decisión del 03/11: se
   envía apenas estén las fichas (martes 03/11 a la noche o miércoles 04/11) y se cierra
-  el domingo 08/11 a las 20. La fecha del documento se corrige en la versión final.
+  el domingo 08/11 a las 20. **Reemplazada el 05/11:** el cuestionario no se aplica; el
+  documento se corrige en la versión final (`../pendientes-documento.md`).
 
 ## Estructura del formulario (Google Forms o similar)
 
@@ -40,6 +48,9 @@ modelo de `cierre_1s`.
    - una recomendación de intervención.
 
 ## Regla de análisis
+
+*Sin efecto desde el 05/11: el cuestionario no se aplica. Se conserva como la regla
+prevista para cuando se aplique (paso siguiente).*
 
 - Para cada aspecto (comprensibilidad y utilidad) se promedian **todas** las respuestas
   (6 casos × evaluadores). El objetivo se cumple si **ambos promedios son ≥ 4**.
@@ -121,6 +132,6 @@ bajo. El título de cada sección es solo «Caso N»: no anticipa el nivel.
 **Mensaje de confirmación:** «Gracias por su participación. Sus respuestas ayudan a
 evaluar si las alertas son comprensibles y útiles para el acompañamiento.»
 
-Al cerrar el formulario: exportar las respuestas a CSV en `reportes/cuestionario/respuestas.csv`
+Cuando se aplique (paso siguiente; no en esta entrega), al cerrar el formulario: exportar las respuestas a CSV en `reportes/cuestionario/respuestas.csv`
 (no se versiona si tiene texto libre con datos personales; revisar antes) y correr el
 script de análisis.

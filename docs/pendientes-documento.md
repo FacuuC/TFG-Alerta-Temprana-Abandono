@@ -4,13 +4,11 @@ Inconsistencias entre el documento (entrega 3 + avance de la entrega 4, al 02/11
 se implementa. **No se editan ahora:** se aplican junto con las correcciones del tutor,
 cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
 
-## Fechas del sprint y del cuestionario
+## Fechas del sprint
 
 - [ ] Herramientas Metodológicas: «El Sprint 1, que finaliza el 2 de noviembre» → fechas
   reales del sprint.
 - [ ] Planificación: hito «sistema funcional integrado (02/11)» y Gantt de la fase 3.
-- [ ] Recolección de Datos: ventana del cuestionario «entre el 28 de octubre y el 4 de
-  noviembre» → nueva ventana (decisión P8).
 - [ ] Sprint backlog: columna «Estado» y burndown con el avance real (`sprint-1/avance.md`).
 
 ## Prototipos de pantalla (al final, reemplazar por capturas reales)
@@ -52,7 +50,8 @@ cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
   Bettahi et al. (2025, p. 18).
 - [ ] Umbrales resultantes (alto 0,8936 y medio 0,5301): con la capacidad del 15 %, un
   estudiante con probabilidad 0,81 queda en nivel medio y uno con 0,45, en bajo. Vale
-  explicarlo en el texto, porque los tutores pueden comentarlo en el cuestionario.
+  explicarlo en el texto, porque las fichas del Anexo muestran casos así (caso 3: 0,81,
+  nivel medio).
 
 ## Evaluación final (decisiones del 04/11)
 
@@ -137,11 +136,33 @@ cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
 - [ ] Figura 5: la pantalla real agrega «Estudiantes nuevos», «Ya existentes» y
   «Rendimientos semestrales agregados», y lista las columnas descartadas.
 
+## Objetivo 4: el cuestionario no se aplica (decisión del 05/11)
+
+El tutor indicó que el cuestionario no se aplica y que el instrumento va en el Anexo («se
+valida la forma, no el contenido»). El objetivo 4 no se reformula: se informa lo que se
+entrega, con el mismo criterio que HU-004, criterio 5. Lugares del documento que prometen
+el resultado:
+
+- [ ] **«Como resultado, se espera…»** (valoración media ≥ 4 sobre 5 en comprensibilidad y
+  utilidad): aclarar que en esta entrega se presenta el instrumento, sin resultados de
+  valoración.
+- [ ] **Recolección de Datos:** la ventana de aplicación («entre el 28 de octubre y el 4 de
+  noviembre») y la regla de análisis (promedios ≥ 4, mínimo de 5 evaluadores) se presentan
+  como lo previsto para cuando se aplique, no como algo realizado.
+- [ ] **HU-006, criterio 5** (valoración media ≥ 4 sobre 5): informarlo como no evaluado en
+  esta entrega, igual que HU-004, criterio 5; los criterios no se reformulan.
+- [ ] **Sprint backlog, tarea 6.4** («aplicar el cuestionario a tutores y docentes y analizar
+  las respuestas»): queda hecha la parte del formulario y las seis fichas; la aplicación y
+  el análisis, no.
+- [ ] **Conclusiones, objetivo 4:** el instrumento (formulario y seis fichas) está en el
+  Anexo, y su aplicación a tutores y docentes es el paso siguiente.
+- [ ] **Anexo:** agregar el formulario (textos de `proyecto/07-cuestionario.md`) y las seis
+  fichas (`reportes/cuestionario/caso_1.png` a `caso_6.png`).
+
 ## Para las Conclusiones y la Demo (cuando haya resultados)
 
 - [ ] AUC-ROC de los tres momentos y comparación con la regresión logística.
 - [ ] Comprobación de umbrales en prueba.
 - [ ] Diferencias entre subgrupos.
 - [ ] AUC-ROC con y sin «sigue cursando».
-- [ ] Resultados del cuestionario (objetivo 4).
 - [ ] Sección Demo: enlace al repositorio público, video y manual de instalación.
