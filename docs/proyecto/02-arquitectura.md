@@ -43,10 +43,26 @@ interna» de la Figura 9 no agrega una llamada de red dentro del mismo proceso.
 - `db`: `postgres:17-alpine`, volumen `datos_db`, solo en la red `interna`
   (`internal: true`), sin puertos publicados, control de salud con `pg_isready`.
 - `app`: imagen del `Dockerfile` (Python 3.13 slim, usuario sin privilegios), redes
-  `interna` y `frontal`, puerto `127.0.0.1:8000`, control de salud contra `/salud`,
-  espera a que la base esté sana.
+  `interna` y `frontal`, puerto publicado como `"127.0.0.1:8000:8000"` (solo en la
+  interfaz local del equipo anfitrión; dentro del contenedor uvicorn escucha en
+  `0.0.0.0:8000`), control de salud contra `/salud`, espera a que la base esté sana.
 - `compose.dev.yaml` (solo desarrollo): publica la base en `127.0.0.1:5432` para usarla
   desde el entorno virtual (notebooks, scripts, `uvicorn --reload`).
+## Entorno de demostración (07/11)
+
+La Figura 9 describe el despliegue integral en un servidor del proveedor SaaS. El
+prototipo del Sprint 1 es, en cambio, un entorno de demostración acotado:
+
+- se ejecuta solo en el equipo local: la aplicación se publica en `127.0.0.1:8000` y no
+  se alcanza desde otras computadoras de la red; la base no publica puertos;
+- se usa únicamente con los archivos del conjunto público del repositorio, nunca con
+  datos reales de estudiantes;
+- el selector de usuario de prueba de la barra superior no es un control de acceso: el
+  inicio de sesión y el control por rol («API REST con control de acceso» en la Figura 9)
+  llegan con HU-009.
+
+Ver `01-seguridad-y-privacidad.md`, «Entorno de demostración».
+
 
 ## Diferencias con el documento a corregir al final
 

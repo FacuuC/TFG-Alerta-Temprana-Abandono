@@ -116,11 +116,16 @@ cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
 
 ## Carga de datos (HU-001, 04/11)
 
-- [ ] **Seguridad: el selector de usuario no es un control de acceso.** En el Sprint 1 no
+- [x] **Seguridad: el selector de usuario no es un control de acceso.** En el Sprint 1 no
   hay inicio de sesión: cualquiera que abra la plataforma puede elegir otro usuario de
   prueba. El rol solo se controla para que la carga quede registrada a nombre del Área de
   Sistemas (decisión P5); el control de acceso real es HU-009 (Sprint 2). Declararlo en la
   sección Seguridad y en las limitaciones del prototipo.
+  **Hecho el 07/11:** apartado «Entorno de demostración» en `proyecto/01-seguridad-y-privacidad.md`,
+  `proyecto/02-arquitectura.md` y el `README.md` (solo en el equipo local, con el puerto
+  publicado en `127.0.0.1:8000`; solo con el conjunto público; el selector no es un control
+  de acceso, HU-009). Al pasarlo al documento, usar ese mismo texto en Seguridad y en las
+  limitaciones del prototipo, y repetirlo en el manual de instalación.
 - [ ] **Informe de errores sin guardar:** se descarga al terminar la carga y no se guarda en
   la base (CARGA no tiene un campo para él y así se respeta la minimización). Si se sale de
   la pantalla, no se puede volver a descargar. Declararlo como limitación.

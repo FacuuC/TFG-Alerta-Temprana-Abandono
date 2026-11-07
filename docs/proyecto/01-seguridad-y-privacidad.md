@@ -41,6 +41,26 @@ sección Seguridad del documento digan lo mismo.
 El prototipo corre en local y sin HTTPS (se declara como limitación). El repositorio es
 público y no contiene datos de estudiantes ni credenciales.
 
+## Entorno de demostración (07/11)
+
+El prototipo es un entorno de demostración acotado, no una instalación para uso real:
+
+- **Se ejecuta solo en el equipo local.** El puerto de la aplicación se publica en
+  `127.0.0.1:8000` (`docker compose ps` lo muestra como `127.0.0.1:8000->8000/tcp`), así
+  que no se alcanza desde otras computadoras de la red; dentro del contenedor la
+  aplicación escucha en `0.0.0.0`. La base no publica puertos (en desarrollo,
+  `compose.dev.yaml` la publica solo en `127.0.0.1`).
+- **Se usa únicamente con los archivos del conjunto público del repositorio** (el dataset
+  de Realinho et al. y los archivos de carga simulados que se generan a partir de él),
+  **nunca con datos reales de estudiantes**.
+- **El selector de usuario de prueba no es un control de acceso.** No hay inicio de
+  sesión: cualquiera que abra la plataforma puede elegir cualquier usuario de prueba. El
+  rol solo se usa para que la carga quede registrada a nombre del Área de Sistemas
+  (decisión P5). El inicio de sesión y el control por rol llegan con HU-009 (Sprint 2).
+
+Por eso la publicación solo en la interfaz local es el control que reemplaza, en el
+Sprint 1, al inicio de sesión: sin él, la plataforma no debe quedar accesible en la red.
+
 ## Sprint 2 (después del 09/11, antes de la defensa): no implementar ahora
 
 HU-009: usuario y contraseña con Argon2id o bcrypt, roles tutor y Área de Sistemas con

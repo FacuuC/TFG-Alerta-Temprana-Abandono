@@ -66,8 +66,28 @@ cambiá `DB_PORT` en `.env` (por ejemplo, a 5433) y repetí el paso 5.
 docker compose up -d --build
 ```
 
-La aplicación queda en http://127.0.0.1:8000 y su estado en http://127.0.0.1:8000/salud.
-La base de datos no expone puertos fuera de la red interna de Docker.
+La aplicación queda en http://localhost:8000 (o http://127.0.0.1:8000) y su estado en
+http://localhost:8000/salud. `docker compose ps` muestra el puerto como
+`127.0.0.1:8000->8000/tcp`: se publica solo en la interfaz local del equipo, así que no se
+puede abrir desde otras computadoras de la red. La base de datos no expone puertos fuera de
+la red interna de Docker.
+
+## Entorno de demostración
+
+El prototipo es un entorno de demostración acotado:
+
+- **Se ejecuta solo en el equipo local.** `compose.yaml` publica la aplicación únicamente
+  en `127.0.0.1:8000` (dentro del contenedor escucha en `0.0.0.0`, pero el equipo anfitrión
+  solo la expone en su interfaz local) y la base no publica puertos. `compose.dev.yaml`
+  también publica la base solo en `127.0.0.1`. No cambies esas líneas por `"8000:8000"`
+  ni publiques la plataforma en la red.
+- **Se usa únicamente con los archivos del conjunto público del repositorio**: el dataset
+  de Realinho et al. (2021) que descarga `scripts/descargar_datos.py` y los archivos
+  simulados que genera `scripts/generar_cargas.py`. **Nunca con datos reales de
+  estudiantes.**
+- **El selector de usuario de prueba no es un control de acceso.** En el Sprint 1 no hay
+  inicio de sesión: cualquiera que abra la plataforma puede elegir cualquier usuario de
+  prueba. El inicio de sesión y el control por rol llegan con HU-009 (Sprint 2).
 
 **En desarrollo (recarga automática):**
 

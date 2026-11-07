@@ -34,6 +34,8 @@ services:
     volumes:
       # Modelos versionados: se entrenan con los scripts y la aplicación solo los lee.
       - ./modelos:/app/modelos:ro
+    # Entorno de demostración: solo en la interfaz local del equipo anfitrión. Sin inicio de
+    # sesión (HU-009), la plataforma no debe quedar accesible desde otras computadoras.
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
