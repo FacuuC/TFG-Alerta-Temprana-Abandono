@@ -22,6 +22,7 @@ from a2wsgi import WSGIMiddleware
 from fastapi import FastAPI
 
 from alerta_temprana import __version__
+from alerta_temprana.api.alertas import router as rutas_alertas
 from alerta_temprana.api.cargas import router as rutas_cargas
 from alerta_temprana.api.predicciones import router as rutas_predicciones
 from alerta_temprana.config import obtener_configuracion
@@ -61,6 +62,7 @@ def salud() -> dict[str, str]:
 
 app.include_router(rutas_cargas)
 app.include_router(rutas_predicciones)
+app.include_router(rutas_alertas)
 
 panel = crear_panel()
 app.mount("/", WSGIMiddleware(panel.server))

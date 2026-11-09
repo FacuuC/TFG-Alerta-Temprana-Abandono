@@ -93,7 +93,6 @@ def contenido() -> list:
         dcc.Loading(html.Div(id="resultado-carga")),
         html.Div(id="recalculo-carga"),
         dcc.Interval(id="intervalo-recalculo", interval=1000, disabled=True),
-        dcc.Store(id="estado-recalculo"),
         dcc.Store(id="errores-carga"),
         dcc.Store(id="id-ultima-carga"),
         dcc.Download(id="descarga-informe"),
@@ -242,22 +241,13 @@ def decodificar_archivo(contenido_upload: str) -> bytes:
     Output("formulario-carga", "style"),
     Output("aviso-rol", "style"),
     Output("aviso-rol", "children"),
-    Output("menu-opciones", "children"),
     Input("usuario-prueba", "value"),
 )
 def segun_usuario(usuario: str):
+    """El formulario solo se muestra al Área de Sistemas (el menú está en ui/panel.py)."""
     if es_area_sistemas(usuario):
-        menu = [html.Div("Carga de datos", style={"fontWeight": 600})]
-        return ESTILO_TARJETA, {**ESTILO_TARJETA, "display": "none"}, None, menu
-    menu = [
-        html.Small("El listado y la ficha se agregan en las próximas historias.", style={"color": "#d1d5db"})
-    ]
-    return (
-        {**ESTILO_TARJETA, "display": "none"},
-        ESTILO_TARJETA,
-        html.P(AVISO_OTRO_ROL, style={"margin": 0}),
-        menu,
-    )
+        return ESTILO_TARJETA, {**ESTILO_TARJETA, "display": "none"}, None
+    return {**ESTILO_TARJETA, "display": "none"}, ESTILO_TARJETA, html.P(AVISO_OTRO_ROL, style={"margin": 0})
 
 
 @callback(Output("nombre-archivo", "children"), Input("archivo-carga", "filename"))

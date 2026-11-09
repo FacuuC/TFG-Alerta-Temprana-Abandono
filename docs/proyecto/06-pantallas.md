@@ -31,13 +31,15 @@ decimal y fechas dd/mm/aaaa.
 ![Listado de alertas](../img/pantalla-listado.png)
 
 - Usuarios: Coordinación del Programa de Tutorías y tutores.
-- Filtros: carrera, turno, nivel de urgencia (por defecto «Alto y medio») y estado de
-  seguimiento. A la derecha: «Última actualización: dd/mm/aaaa · modelo vX (momento)»
+- Filtros: carrera, turno, nivel de urgencia y estado de seguimiento, sin valor por
+  defecto: al entrar se ven todas las alertas, incluidas las de estudiantes cuyo riesgo
+  bajó a nivel bajo. A la derecha: «Última actualización: dd/mm/aaaa · modelo vX (momento)»
   (HU-003, criterio 4).
-- Tarjetas: cantidad en nivel alto, en nivel medio y pendientes de contacto.
+- Tarjetas: cantidad en nivel alto, en nivel medio y pendientes de contacto, sobre las
+  mismas alertas que muestra la tabla (respetan el filtro activo).
 - Tabla: código, carrera (nombre, no código), turno, nivel (etiqueta con color **y**
   texto), probabilidad (0,91), estado (desplegable editable) y «Ver ficha».
-- Orden: nivel alto primero y, dentro de cada nivel, probabilidad de mayor a menor.
+- Orden: nivel alto, medio y bajo y, dentro de cada nivel, probabilidad de mayor a menor.
 - Sin datos identificatorios.
 
 ## Ficha del estudiante (Figura 7): HU-006 y HU-007

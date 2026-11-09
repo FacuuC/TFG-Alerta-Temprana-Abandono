@@ -22,6 +22,18 @@ cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
 - [ ] Figuras 6 y 7: códigos de 6 caracteres (`EST-7F3A21`); con la decisión P1 son de 8
   (`EST-7F3A21C4`).
 - [ ] Figuras 5 a 7: «Cerrar sesión» no existe en el Sprint 1 (selector de usuario de prueba).
+- [ ] Figura 6: «Última actualización · modelo» aparece en la barra superior (común a
+  todas las pantallas), no a la derecha de los filtros.
+- [ ] Figura 6 (listado) y alcance del prototipo: en el prototipo, el usuario Tutor/a ve
+  **todas** las alertas, no solo las de sus estudiantes, porque la asignación a tutores es
+  HU-011 y la restricción por rol, HU-009 (las dos fuera del Sprint 1). Aclararlo en el
+  texto de la Figura 6 o en las limitaciones del prototipo.
+- [ ] Tabla de roles y alcance del prototipo: en el prototipo, el usuario de prueba elegido
+  define el menú y la pantalla que se muestra (Área de Sistemas → carga; Coordinación y
+  Tutor/a → listado; Secretaría Académica → aviso de que el panel de métricas, HU-008, no
+  forma parte del prototipo). Es **navegación, no control de acceso**: cualquiera puede
+  elegir cualquier usuario y la API interna no restringe por rol. La restricción real
+  llega con el inicio de sesión por rol (HU-009, Sprint 2). Aclararlo en las limitaciones.
 
 ## Texto
 

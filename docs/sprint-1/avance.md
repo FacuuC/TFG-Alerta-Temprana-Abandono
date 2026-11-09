@@ -19,6 +19,8 @@ terminar cada historia, sumar una fila. Puntos totales: 45.
 | 05/11 | HU-003 (3.1 a 3.3) + HU-004 (4.2) | En progreso | 21 | 24 | P3 y P4 confirmadas. MODELO se llena desde `modelos/`, servicio de predicción, planificador en segundo plano, alertas (P3), estado del recálculo en la carga y última actualización en la barra superior. De punta a punta con `data/cargas/`: 117 / 134 / 137 en nivel alto (como el informe) y las 6 fichas coinciden. 196 pruebas en verde. Falta: verificación manual, `/revisar-hu` y commit |
 | 09/11 | HU-003 | Terminada | 26 | 19 | Criterios 1 a 5 cumplidos (revisión con evidencia); verificación manual del recálculo en verde (Facundo); el criterio 5 se verifica con pruebas automáticas. 198 pruebas en verde |
 | 09/11 | HU-004 | Terminada | 29 | 16 | Criterios 1 a 4 cumplidos (1 en HU-002; 2 a 4 en el servicio de predicción, con alertas según P3); criterio 5 informado como no alcanzado en prueba, sin reajustar (decisión del 04/11). Se sumaron las pruebas de la tarea 3.3 de carga rechazada y de conservación del estado de seguimiento entre cargas. 198 pruebas en verde |
+| 09/11 | HU-005 (5.1 y 5.2) | En progreso | 29 | 16 | Servicio de consulta con orden y filtros en SQL, `GET /api/alertas`, navegación según el usuario de prueba (decisión del 09/11) y listado sin filtro por defecto (modificación de P3 del 07/11, observación 7 del tutor). Con las tres cargas de la Demo: 529 alertas (alto 137, medio 131, bajo 261). 244 pruebas en verde. Falta: verificación manual, `/revisar-hu` y commit |
+| 09/11 | HU-005 | Terminada | 34 | 11 | Criterios 1 a 4 cumplidos (revisión con evidencia); verificación manual del listado y de la navegación en verde (Facundo). Sin filtro por defecto (modificación de P3, observación 7 del tutor); 529 alertas con las tres cargas (alto 137, medio 131, bajo 261). 244 pruebas en verde |
 
 ### Verificación manual de la pantalla de carga (HU-001)
 
@@ -74,6 +76,43 @@ El criterio 5 (sin modelo habilitado) se verifica solo con las pruebas automáti
 Resultado (09/11, Facundo): **los 6 pasos pasaron.** La base de desarrollo queda con las
 tres cargas simuladas, en orden, y sin los estudiantes sintéticos.
 
+### Verificación manual del listado (HU-005)
+
+Con la base de desarrollo con las tres cargas (resultado de la verificación de HU-003) y
+`uvicorn alerta_temprana.app:app --reload`, en http://127.0.0.1:8000:
+
+1. Elegir «Coordinación (coordinacion01)» en la barra superior → pasa solo, sin recargar,
+   al «Listado de alertas tempranas»; el menú lateral muestra «Listado de alertas». Los
+   cuatro filtros están vacíos («Todas» / «Todos»).
+2. Tarjetas: nivel alto 137, nivel medio 131, pendientes de contacto 529; «529 alertas».
+   La tabla empieza por nivel alto con la probabilidad más alta y termina en nivel bajo;
+   el nivel se ve como etiqueta con color y texto; probabilidad con coma (0,99).
+3. Desplazar la tabla: el encabezado queda fijo. Esta vista, sin filtros, es la captura de
+   la Figura 6.
+4. Filtrar Nivel = Bajo → 261 alertas, tarjetas alto 0 y medio 0. Sumar Turno = Nocturno,
+   una carrera y un estado → tabla y tarjetas cambian juntas; con una combinación sin
+   resultados, «Ninguna alerta cumple los filtros.».
+5. Navegación según el usuario (decisión del 09/11), empezando cada caso en el listado con
+   «Coordinación» y un filtro aplicado (por ejemplo, Nivel = Alto):
+   - a. «Tutor/a (tutor01)» → sigue el listado, **con el mismo filtro** y las mismas
+     alertas (el tutor ve todas: ver `pendientes-documento.md`).
+   - b. «Área de Sistemas (sistemas01)» → pasa sin recargar a «Carga de datos»; la
+     dirección queda en `/`, el menú muestra «Carga de datos» y la carga funciona como antes.
+   - c. Volver a «Coordinación» (pasa al listado) y elegir «Secretaría Académica
+     (secretaria01)» → «Panel de métricas» con el aviso de que el panel de métricas
+     (HU-008) no forma parte de este prototipo; sin filtros, tarjetas, tabla ni formulario
+     de carga; la dirección queda en `/metricas`.
+   - d. Con «Área de Sistemas», escribir a mano `http://127.0.0.1:8000/listado` → se
+     muestra «Carga de datos» y la dirección pasa a `/`. Con «Secretaría Académica»,
+     escribir `/listado` o `/` → pasa a `/metricas`. Con «Coordinación», escribir `/otra`
+     → pasa a `/listado`.
+   - e. En ningún caso aparecen errores en la consola del navegador (F12 → Consola).
+6. `curl.exe "http://127.0.0.1:8000/api/alertas?nivel=bajo"` con cualquier usuario elegido
+   → 261 alertas, resumen con alto y medio en 0 (la API no cambia con la navegación).
+
+Resultado (09/11, Facundo): **los 6 pasos pasaron**, incluidas la navegación al cambiar de
+usuario y al escribir direcciones a mano, y la consola del navegador sin errores.
+
 ## Estado de las historias
 
 | ID | Puntos | Estado | Commit |
@@ -82,6 +121,6 @@ tres cargas simuladas, en orden, y sin los estudiantes sintéticos.
 | HU-002 | 13 | Terminada | «HU-002: evaluación final sobre prueba…» (04/11) |
 | HU-003 | 5 | Terminada | «HU-003 y HU-004: recálculo automático del riesgo…» (09/11) |
 | HU-004 | 3 | Terminada | «HU-003 y HU-004: recálculo automático del riesgo…» (09/11) |
-| HU-005 | 5 | Por hacer | |
+| HU-005 | 5 | Terminada | «HU-005: listado de alertas con orden, filtros y navegación por usuario…» (09/11) |
 | HU-006 | 8 | Por hacer | |
 | HU-007 | 3 | Por hacer | |
