@@ -332,8 +332,16 @@ def test_probabilidad_con_coma_decimal_y_textos_de_la_fila():
 def test_tabla_no_muestra_datos_identificatorios():
     from alerta_temprana.ui import listado
 
-    assert list(listado.COLUMNAS_TABLA) == ["codigo_estudiante", "carrera", "turno", "nivel", "probabilidad", "estado"]
-    assert set(listado.COLUMNAS_TABLA) <= set(COLUMNAS_LISTADO)
+    assert list(listado.COLUMNAS_TABLA) == [
+        "codigo_estudiante",
+        "carrera",
+        "turno",
+        "nivel",
+        "probabilidad",
+        "estado",
+        "ficha",  # enlace «Ver ficha» (HU-006), sin datos
+    ]
+    assert set(listado.COLUMNAS_TABLA) - {"ficha"} <= set(COLUMNAS_LISTADO)
     encabezados = " ".join(listado.COLUMNAS_TABLA.values()).lower()
     assert not any(c in encabezados for c in ("legajo", "documento", "nombre"))
 

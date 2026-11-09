@@ -16,11 +16,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 from matplotlib.patches import FancyBboxPatch  # noqa: E402
 
-TITULO_FACTORES = "Factores que más pesan en esta estimación"
-AVISO = (
-    "La alerta es una estimación para apoyar la decisión y no reemplaza el criterio del tutor. "
-    "Los factores muestran cuánto pesa cada variable en la estimación, no las causas del abandono."
-)
+from alerta_temprana.modelo.etiquetas import AVISO_FICHA as AVISO  # noqa: E402
+from alerta_temprana.modelo.etiquetas import TITULO_FACTORES  # noqa: E402
+
 COLORES_NIVEL = {  # (fondo de la etiqueta, texto)
     "alto": ("#FDE2E1", "#9B1C1C"),
     "medio": ("#FEF3C7", "#7A4B00"),

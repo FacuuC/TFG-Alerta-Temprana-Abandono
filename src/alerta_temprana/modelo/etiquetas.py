@@ -11,6 +11,15 @@ from collections.abc import Mapping
 
 from alerta_temprana.datos import variables as V
 
+# Textos fijos de la ficha (HU-006, notas de implementación; criterio 4). Los usan la
+# pantalla (ui/ficha.py) y las imágenes del cuestionario (modelo/ficha_imagen.py).
+TITULO_FACTORES = "Factores que más pesan en esta estimación"
+AVISO_FICHA = (
+    "La alerta es una estimación para apoyar la decisión y no reemplaza el criterio del tutor. "
+    "Los factores muestran cuánto pesa cada variable en la estimación, no las causas del abandono."
+)
+SENTIDO_FACTOR: dict[bool, str] = {True: "Aumenta el riesgo", False: "Disminuye el riesgo"}
+
 NOMBRES: dict[str, str] = {
     "estado_civil": "Estado civil",
     "nacionalidad": "Nacionalidad",

@@ -17,6 +17,21 @@ cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
   (término fijo de la obs. 18).
 - [ ] Figura 7: aparece «Aranceles al día: no», una variable **excluida** del modelo.
 - [ ] Figura 7: el aviso no dice que los factores no son causas (HU-006, criterio 4).
+- [ ] Figura 7 (ficha real, HU-006, 09/11): la tarjeta «Cálculo» muestra fecha **y hora**
+  («08/11/2026 23:57 · modelo v1.0 (Cierre del 2.º semestre)»), igual que la última
+  actualización de la barra superior; arriba hay un enlace «← Volver al listado»; el título
+  es «Ficha del estudiante EST-…». La sección «Seguimiento» muestra el estado como texto
+  hasta HU-007 (desplegable y «Guardar estado»).
+- [ ] Figura 7 y Anexo: la ficha muestra la predicción **vigente** (con las tres cargas de
+  la Demo, la de cierre del 2.º semestre), mientras que las seis fichas del Anexo son de
+  cierre del 1.er semestre. Los PNG del Anexo no se reemplazan por capturas. Con solo las
+  cargas de inscripción y de cierre del 1.er semestre, la pantalla muestra lo mismo que esas
+  fichas (prueba de `tests/test_hu006.py`).
+- [ ] Ficha, explicación no válida: si un factor guardado no corresponde al momento del
+  modelo (por ejemplo, una variable excluida) o no hay cinco, la ficha no muestra ningún
+  factor y aparece «No se puede mostrar la explicación de esta alerta.»; el detalle queda en
+  el registro de la aplicación. Con los modelos v1.0 no ocurre (es un control). Mencionarlo si
+  se describe cómo se garantiza que no aparezcan variables excluidas.
 - [ ] Figura 5 (carga): «Momento del período» → «Momento de predicción»; en «Cargas
   anteriores», «Ingreso» → «Inscripción».
 - [ ] Figuras 6 y 7: códigos de 6 caracteres (`EST-7F3A21`); con la decisión P1 son de 8
@@ -207,7 +222,10 @@ el resultado:
   noviembre») y la regla de análisis (promedios ≥ 4, mínimo de 5 evaluadores) se presentan
   como lo previsto para cuando se aplique, no como algo realizado.
 - [ ] **HU-006, criterio 5** (valoración media ≥ 4 sobre 5): informarlo como no evaluado en
-  esta entrega, igual que HU-004, criterio 5; los criterios no se reformulan.
+  esta entrega, igual que HU-004, criterio 5; los criterios no se reformulan. **En el
+  prototipo no se verifica** (09/11): HU-006 se da por terminada con los criterios 1 a 4 y
+  el 5 queda registrado como no verificado, porque depende de la aplicación del
+  cuestionario. No hay `reportes/cuestionario/analisis.md` ni `scripts/analizar_cuestionario.py`.
 - [ ] **Sprint backlog, tarea 6.4** («aplicar el cuestionario a tutores y docentes y analizar
   las respuestas»): queda hecha la parte del formulario y las seis fichas; la aplicación y
   el análisis, no.

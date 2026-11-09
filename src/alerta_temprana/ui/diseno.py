@@ -13,6 +13,8 @@ no cambia.
 
 from __future__ import annotations
 
+import re
+
 from dash import dcc, html
 
 from alerta_temprana.db.inicializacion import (
@@ -43,6 +45,28 @@ TITULOS: dict[str, str] = {
     RUTA_METRICAS: "Panel de métricas",
 }
 
+# Ficha del estudiante (HU-006): /ficha/<id_alerta>. No es una opción del menú: se abre
+# desde «Ver ficha» y pertenece a la sección del listado, así que cuenta como pantalla de
+# Coordinación y Tutor/a para la regla de navegación.
+PREFIJO_FICHA = "/ficha/"
+_FICHA = re.compile(rf"^{PREFIJO_FICHA}(\d+)$")
+
+
+def ruta_ficha(id_alerta: int) -> str:
+    return f"{PREFIJO_FICHA}{id_alerta}"
+
+
+def id_alerta_de(ruta: str | None) -> int | None:
+    """Id de la alerta de una dirección de ficha («/ficha/38» → 38), o None."""
+    coincidencia = _FICHA.match(ruta or "")
+    return int(coincidencia.group(1)) if coincidencia else None
+
+
+def seccion_de(ruta: str | None) -> str | None:
+    """Pantalla del menú a la que pertenece una dirección: la ficha es parte del listado."""
+    return RUTA_LISTADO if id_alerta_de(ruta) is not None else ruta
+
+
 # Menú por rol (ruta, texto del enlace). La primera es la pantalla inicial del rol.
 MENU_POR_ROL: dict[str, list[tuple[str, str]]] = {
     ROL_AREA_SISTEMAS: [(RUTA_CARGA, "Carga de datos")],
@@ -65,6 +89,14 @@ ETIQUETA_ESTADO: dict[str, str] = {
     "pendiente": "Pendiente",
     "contactado": "Contactado",
     "en_acompanamiento": "En acompañamiento",
+}
+
+# Sentido de un factor en la ficha (HU-006): rojo aumenta, azul disminuye. Las barras usan
+# los colores de las fichas del cuestionario; el texto, un tono más oscuro para que se lea
+# bien sobre blanco. Siempre van con el texto «Aumenta/Disminuye el riesgo».
+COLOR_SENTIDO: dict[str, dict[str, str]] = {
+    "aumenta": {"barra": "#D64545", "texto": "#B91C1C"},
+    "disminuye": {"barra": "#2F6FD1", "texto": "#1D4ED8"},
 }
 
 COLOR_MENU = "#1f2937"
@@ -115,14 +147,17 @@ def menu_de(nombre_usuario: str | None) -> list[tuple[str, str]]:
 
 
 def ruta_para(nombre_usuario: str | None, ruta: str | None) -> str:
-    """Pantalla que corresponde mostrar: la actual si está en el menú del usuario; si no,
-    la pantalla inicial de su rol. Es navegación, no control de acceso."""
+    """Pantalla que corresponde mostrar: la actual si está en el menú del usuario (la ficha
+    cuenta como parte del listado); si no, la pantalla inicial de su rol. Es navegación,
+    no control de acceso."""
     rutas = [r for r, _ in menu_de(nombre_usuario)]
-    return ruta if ruta in rutas else rutas[0]
+    return ruta if seccion_de(ruta) in rutas else rutas[0]
 
 
 def opciones_menu(nombre_usuario: str | None, ruta_actual: str | None = None) -> list:
-    """Enlaces del menú lateral según el rol del usuario de prueba."""
+    """Enlaces del menú lateral según el rol del usuario de prueba. Con la ficha abierta
+    se resalta «Listado de alertas»."""
+    ruta_actual = seccion_de(ruta_actual)
     return [
         html.Div(
             dcc.Link(

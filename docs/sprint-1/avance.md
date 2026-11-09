@@ -21,6 +21,8 @@ terminar cada historia, sumar una fila. Puntos totales: 45.
 | 09/11 | HU-004 | Terminada | 29 | 16 | Criterios 1 a 4 cumplidos (1 en HU-002; 2 a 4 en el servicio de predicción, con alertas según P3); criterio 5 informado como no alcanzado en prueba, sin reajustar (decisión del 04/11). Se sumaron las pruebas de la tarea 3.3 de carga rechazada y de conservación del estado de seguimiento entre cargas. 198 pruebas en verde |
 | 09/11 | HU-005 (5.1 y 5.2) | En progreso | 29 | 16 | Servicio de consulta con orden y filtros en SQL, `GET /api/alertas`, navegación según el usuario de prueba (decisión del 09/11) y listado sin filtro por defecto (modificación de P3 del 07/11, observación 7 del tutor). Con las tres cargas de la Demo: 529 alertas (alto 137, medio 131, bajo 261). 244 pruebas en verde. Falta: verificación manual, `/revisar-hu` y commit |
 | 09/11 | HU-005 | Terminada | 34 | 11 | Criterios 1 a 4 cumplidos (revisión con evidencia); verificación manual del listado y de la navegación en verde (Facundo). Sin filtro por defecto (modificación de P3, observación 7 del tutor); 529 alertas con las tres cargas (alto 137, medio 131, bajo 261). 244 pruebas en verde |
+| 09/11 | HU-006 (6.3) | En progreso | 34 | 11 | Ficha en `/ficha/<id_alerta>` desde «Ver ficha» del listado: probabilidad, nivel, carrera y turno, cálculo (fecha y hora · modelo), los 5 factores con texto comprensible, barra y sentido, el aviso del criterio 4 y el seguimiento como texto. `GET /api/alertas/{id}`. Un factor que no corresponde al momento no se muestra: mensaje controlado y detalle en el registro. Cuenta como pantalla de Coordinación y Tutor/a (navegación del 09/11). Con inscripción y cierre_1s, las fichas de los 6 casos coinciden con el Anexo. Criterio 5 no verificado (cuestionario no aplicado). 277 pruebas en verde. Falta: verificación manual, `/revisar-hu` y commit |
+| 09/11 | HU-006 | Terminada | 42 | 3 | Criterios 1 a 4 cumplidos (revisión con evidencia); verificación manual de la ficha, la navegación y la API en verde, con la captura de la Figura 7 (Facundo). Criterio 5 no verificado: el cuestionario no se aplica (decisión del 05/11), se informa como no evaluado, igual que HU-004, criterio 5. Las fichas de los 6 casos del Anexo coinciden con la pantalla (con inscripción y cierre_1s). 277 pruebas en verde |
 
 ### Verificación manual de la pantalla de carga (HU-001)
 
@@ -113,6 +115,69 @@ Con la base de desarrollo con las tres cargas (resultado de la verificación de 
 Resultado (09/11, Facundo): **los 6 pasos pasaron**, incluidas la navegación al cambiar de
 usuario y al escribir direcciones a mano, y la consola del navegador sin errores.
 
+### Verificación manual de la ficha (HU-006)
+
+Con la base de desarrollo con las tres cargas (la misma de HU-005) y
+`uvicorn alerta_temprana.app:app --reload`, en http://127.0.0.1:8000. Los números de alerta
+(294 y 58) son los de esa base; si se vuelve a armar, se buscan por el código.
+
+1. Elegir «Coordinación (coordinacion01)» → listado con la columna «Ficha» y «Ver ficha» en
+   cada fila. Filtrar Carrera = Educación Básica y Nivel = Alto y hacer clic en «Ver ficha» de
+   **EST-932B2E48** → se abre sin recargar la página, la dirección pasa a `/ficha/294`, el
+   título es «Ficha del estudiante EST-932B2E48» y el menú resalta «Listado de alertas».
+2. Tarjetas: probabilidad **0,98**; nivel **Alto** (etiqueta roja con texto); «Educación
+   Básica · Diurno»; cálculo «08/11/2026 23:57 · modelo v1.0 (Cierre del 2.º semestre)».
+3. «Factores que más pesan en esta estimación», en este orden (barra relativa al mayor):
+
+   | # | Factor | Sentido | Barra |
+   |---|---|---|---|
+   | 1 | Materias aprobadas en el 2.º semestre: 1 de 6 | Aumenta el riesgo (rojo) | 100 % |
+   | 2 | Carrera: Educación Básica | Aumenta el riesgo (rojo) | 69 % |
+   | 3 | Nivel educativo de la madre: sin dato | Aumenta el riesgo (rojo) | 48 % |
+   | 4 | Materias aprobadas en el 1.er semestre: 3 de 6 | Aumenta el riesgo (rojo) | 26 % |
+   | 5 | Edad al ingresar: 20 años | Disminuye el riesgo (azul) | 18 % |
+
+   Debajo, el aviso completo: «La alerta es una estimación para apoyar la decisión y no
+   reemplaza el criterio del tutor. Los factores muestran cuánto pesa cada variable en la
+   estimación, no las causas del abandono.». En ninguna parte dice «más influyen», «Aranceles
+   al día» ni «Matrícula al día». Seguimiento: «Estado: Pendiente» y «Alerta creada el
+   08/11/2026».
+4. «← Volver al listado» → listado sin filtros (529 alertas).
+5. Filtrar Carrera = Higiene Oral y Nivel = Bajo y abrir **EST-4CC9FA68** (`/ficha/58`):
+   probabilidad **0,19**; nivel **Bajo**; «Higiene Oral · Diurno»; el mismo cálculo; factores:
+
+   | # | Factor | Sentido | Barra |
+   |---|---|---|---|
+   | 1 | Materias aprobadas en el 2.º semestre: 8 de 8 | Disminuye el riesgo (azul) | 100 % |
+   | 2 | Edad al ingresar: 27 años | Aumenta el riesgo (rojo) | 35 % |
+   | 3 | Materias aprobadas en el 1.er semestre: 7 de 7 | Disminuye el riesgo (azul) | 31 % |
+   | 4 | Nota promedio en el 2.º semestre: 13,2 (escala de 0 a 20) | Disminuye el riesgo (azul) | 22 % |
+   | 5 | Materias inscriptas en el 2.º semestre: 8 | Aumenta el riesgo (rojo) | 14 % |
+
+   Seguimiento: «Estado: Pendiente» y «Alerta creada el 08/11/2026».
+6. Navegación con la ficha abierta (decisión del 09/11):
+   - a. «Tutor/a (tutor01)» → la misma ficha, sin cambios.
+   - b. «Área de Sistemas (sistemas01)» → «Carga de datos», dirección `/`.
+   - c. Volver a «Coordinación», abrir una ficha y elegir «Secretaría Académica
+     (secretaria01)» → «Panel de métricas», dirección `/metricas`.
+   - d. Con «Coordinación», escribir a mano `/ficha/99999` → «No se encontró la alerta.» con
+     el enlace para volver; `/ficha/abc` → pasa a `/listado`. Con «Área de Sistemas»,
+     escribir `/ficha/294` → «Carga de datos» en `/`.
+   - e. Sin errores en la consola del navegador (F12 → Consola).
+7. API: `curl.exe http://127.0.0.1:8000/api/alertas/294` → probabilidad 0.9805, nivel
+   `alto`, momento `cierre_2s` y los 5 factores con el texto del paso 3;
+   `curl.exe http://127.0.0.1:8000/api/alertas/99999` → 404.
+8. Captura de la **Figura 7**: la ficha de EST-932B2E48 con «Tutor/a (tutor01)» en la barra
+   superior, con las tarjetas, los cinco factores y el aviso visibles. Si HU-007 se termina,
+   conviene repetirla después, con el desplegable del estado.
+
+El criterio 5 (valoración del cuestionario) no se verifica: el cuestionario no se aplica
+(decisión del 05/11; `pendientes-documento.md`).
+
+Resultado (09/11, Facundo): **los 8 pasos pasaron**, incluidas la navegación con la ficha
+abierta, las direcciones escritas a mano, la API y la captura de la Figura 7 (ficha de
+EST-932B2E48 con «Tutor/a» en la barra superior y el aviso visible).
+
 ## Estado de las historias
 
 | ID | Puntos | Estado | Commit |
@@ -122,5 +187,5 @@ usuario y al escribir direcciones a mano, y la consola del navegador sin errores
 | HU-003 | 5 | Terminada | «HU-003 y HU-004: recálculo automático del riesgo…» (09/11) |
 | HU-004 | 3 | Terminada | «HU-003 y HU-004: recálculo automático del riesgo…» (09/11) |
 | HU-005 | 5 | Terminada | «HU-005: listado de alertas con orden, filtros y navegación por usuario…» (09/11) |
-| HU-006 | 8 | Por hacer | |
+| HU-006 | 8 | Terminada | «HU-006: ficha del estudiante con los factores que más pesan…» (09/11) |
 | HU-007 | 3 | Por hacer | |

@@ -1,12 +1,12 @@
-"""Panel de Dash: pantallas de carga (HU-001) y listado de alertas (HU-005).
+"""Panel de Dash: carga (HU-001), listado de alertas (HU-005) y ficha del estudiante (HU-006).
 
 El layout común tiene el menú lateral (según el usuario de prueba), la barra superior
 con el selector y la última actualización, y el estado del último recálculo. El contenido
-cambia con la dirección: `/` es la carga, `/listado` el listado y `/metricas` el aviso de
-la Secretaría Académica. La ficha se suma en HU-006.
+cambia con la dirección: `/` es la carga, `/listado` el listado, `/ficha/<id_alerta>` la
+ficha de una alerta y `/metricas` el aviso de la Secretaría Académica.
 
 Regla de navegación (decisión del 09/11): lo que se muestra siempre es una pantalla del
-menú del usuario elegido. Al cambiar de usuario o al entrar a una dirección escrita a
+menú del usuario elegido; la ficha cuenta como parte del listado (Coordinación y Tutor/a). Al cambiar de usuario o al entrar a una dirección escrita a
 mano que no está en su menú, se pasa a la pantalla inicial de su rol, sin recargar la
 página. Si la pantalla actual está en el menú del nuevo usuario, no cambia (ni se vuelve
 a armar, así se conservan los filtros del listado). Es navegación, no control de acceso
@@ -23,6 +23,7 @@ from dash import Input, Output, callback, ctx, dcc, html, no_update
 from alerta_temprana.ui import (
     actualizacion,  # noqa: F401  (última actualización en la barra superior)
     carga,  # registra los callbacks de la pantalla de carga
+    ficha,  # ficha del estudiante (HU-006)
     listado,  # registra los callbacks del listado
 )
 from alerta_temprana.ui.diseno import (
@@ -32,6 +33,7 @@ from alerta_temprana.ui.diseno import (
     RUTA_LISTADO,
     RUTA_METRICAS,
     TITULOS,
+    id_alerta_de,
     opciones_menu,
     pagina,
     ruta_para,
@@ -47,7 +49,10 @@ _CONTENIDO = {RUTA_CARGA: carga.contenido, RUTA_LISTADO: listado.contenido, RUTA
 
 
 def pantalla_para(ruta: str) -> tuple[str, list]:
-    """(título, contenido) de una pantalla del menú."""
+    """(título, contenido) de una pantalla del menú o de la ficha de una alerta."""
+    id_alerta = id_alerta_de(ruta)
+    if id_alerta is not None:
+        return ficha.pantalla(id_alerta)
     return TITULOS[ruta], _CONTENIDO[ruta]()
 
 

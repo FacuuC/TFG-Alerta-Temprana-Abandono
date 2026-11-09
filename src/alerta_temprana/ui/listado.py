@@ -7,8 +7,9 @@ calculadas sobre las mismas alertas que muestra la tabla, y la tabla en un conte
 desplazamiento y encabezado fijo.
 
 El callback solo arma los filtros, llama a servicio/alertas.py y muestra el resultado:
-el orden y los filtros están en la consulta. La ficha («Ver ficha») se agrega en HU-006
-y el desplegable del estado, en HU-007; acá el estado se muestra como texto.
+el orden y los filtros están en la consulta. Cada fila tiene «Ver ficha», que abre la
+ficha de la alerta (HU-006) sin recargar la página. El desplegable del estado es de
+HU-007; acá el estado se muestra como texto.
 """
 
 from __future__ import annotations
@@ -35,6 +36,7 @@ from alerta_temprana.ui.diseno import (
     ETIQUETA_ESTADO,
     ETIQUETA_NIVEL,
     etiqueta_nivel,
+    ruta_ficha,
 )
 
 COLUMNAS_TABLA: dict[str, str] = {
@@ -44,7 +46,9 @@ COLUMNAS_TABLA: dict[str, str] = {
     "nivel": "Nivel",
     "probabilidad": "Probabilidad",
     "estado": "Estado",
+    "ficha": "Ficha",  # enlace «Ver ficha» (HU-006)
 }
+VER_FICHA = "Ver ficha"
 ETIQUETA_TURNO = {"diurno": "Diurno", "nocturno": "Nocturno"}
 FILTROS = ("filtro-carrera", "filtro-turno", "filtro-nivel", "filtro-estado")
 
@@ -163,6 +167,8 @@ def _celda(alerta: dict, columna: str):
         return ETIQUETA_TURNO[alerta["turno"]]
     if columna == "estado":
         return ETIQUETA_ESTADO[alerta["estado"]]
+    if columna == "ficha":
+        return dcc.Link(VER_FICHA, href=ruta_ficha(alerta["id_alerta"]))  # sin recargar la página
     return alerta[columna]
 
 
