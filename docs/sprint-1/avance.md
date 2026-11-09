@@ -227,6 +227,30 @@ no vuelve a armar la tabla.
 Resultado (09/11, Facundo): **los 11 pasos pasaron**, sin errores en la consola del
 navegador. Las capturas finales de las Figuras 6 y 7 se sacan después.
 
+### Prueba de restauración del estado de la demo (cierre técnico)
+
+Control de Seguridad: «el procedimiento de restauración se prueba y se documenta en el
+manual de instalación» (README, sección 5).
+
+1. Respaldo del estado de la demo con `scripts/respaldar`: `respaldos/demo_20261109-1409.dump`.
+2. Base vacía con `docker compose down -v` y `docker compose up -d`.
+3. Restauración con `scripts/restaurar` sobre esa base vacía.
+4. `scripts/verificar` coincide con el estado respaldado:
+
+   | Control | Resultado |
+   |---|---|
+   | Estudiantes | 885 |
+   | Cargas | 3 (inscripción, cierre del 1.er semestre y cierre del 2.º semestre) |
+   | Alertas por nivel de urgencia | 529: 137 alto, 131 medio y 261 bajo |
+   | Alertas por estado de seguimiento | 522 pendiente, 4 contactado y 3 en acompañamiento |
+   | Cambios de estado (CAMBIO_ESTADO) | 8 |
+   | Modelos habilitados | 3 |
+   | Filas duplicadas (roles, usuarios de prueba, MODELO) | Ninguna |
+
+5. La ficha de EST-932B2E48 conserva su último cambio de estado.
+
+Resultado (09/11): **la restauración reproduce el estado respaldado.**
+
 ## Estado de las historias
 
 | ID | Puntos | Estado | Commit |
