@@ -84,3 +84,31 @@ def sesion_db(motor_pruebas):
         conexion.execute(text(f"TRUNCATE {', '.join(tablas)} RESTART IDENTITY CASCADE"))
     with Session(motor_pruebas, expire_on_commit=False) as sesion:
         yield sesion
+
+
+# --- Recálculo del riesgo (HU-003) ------------------------------------------------------
+
+
+@pytest.fixture
+def sin_enganches():
+    """registrar_carga sin funciones enganchadas (se restauran al terminar)."""
+    from alerta_temprana.servicio import carga as servicio_carga
+
+    anteriores = list(servicio_carga._al_terminar_carga)
+    servicio_carga._al_terminar_carga.clear()
+    yield
+    servicio_carga._al_terminar_carga[:] = anteriores
+
+
+@pytest.fixture
+def planificador(motor_pruebas, sin_enganches):
+    """Planificador sobre la base de pruebas, enganchado a registrar_carga como en app.py."""
+    from sqlalchemy.orm import sessionmaker
+
+    from alerta_temprana.servicio import carga as servicio_carga
+    from alerta_temprana.servicio.planificador import Planificador
+
+    plan = Planificador(sessionmaker(bind=motor_pruebas, expire_on_commit=False), RAIZ / "modelos")
+    servicio_carga.registrar_al_terminar_carga(plan.al_terminar_carga)
+    yield plan
+    plan.cerrar()

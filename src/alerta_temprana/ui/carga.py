@@ -1,9 +1,13 @@
-"""Pantalla de carga de datos (Figura 5; HU-001).
+"""Pantalla de carga de datos (Figura 5; HU-001 y HU-003).
 
 Los callbacks solo leen la pantalla, llaman a servicio/carga.py y muestran el
 resultado: la validación, la seudonimización y el guardado no están acá. El archivo
 subido viaja en memoria (base64) y se descarta después de procesarlo; el informe de
 errores se arma en memoria y no se guarda en la base.
+
+Después de una carga válida, el riesgo se recalcula en segundo plano (HU-003): la
+pantalla muestra «en curso» y consulta el planificador cada segundo hasta que termina
+(«Completado: modelo v1.0 (…)») o informa el motivo por el que no se calculó.
 """
 
 from __future__ import annotations
@@ -19,6 +23,7 @@ from alerta_temprana.datos.validacion import CargaRechazada, ErrorRegistro
 from alerta_temprana.datos.variables import ETIQUETA_MOMENTO, Momento
 from alerta_temprana.db.sesion import obtener_fabrica_sesiones
 from alerta_temprana.servicio.carga import PermisoDenegado, ResultadoCarga, listar_cargas, registrar_carga
+from alerta_temprana.servicio.planificador import COMPLETADO, EN_CURSO, TERMINALES, obtener_planificador
 from alerta_temprana.ui.diseno import (
     COLOR_BORDE,
     COLOR_ERROR,
@@ -86,6 +91,9 @@ def contenido() -> list:
             ],
         ),
         dcc.Loading(html.Div(id="resultado-carga")),
+        html.Div(id="recalculo-carga"),
+        dcc.Interval(id="intervalo-recalculo", interval=1000, disabled=True),
+        dcc.Store(id="estado-recalculo"),
         dcc.Store(id="errores-carga"),
         dcc.Store(id="id-ultima-carga"),
         dcc.Download(id="descarga-informe"),
@@ -177,6 +185,32 @@ def mostrar_rechazo(error: CargaRechazada) -> html.Div:
     )
 
 
+def mostrar_recalculo(estado: dict | None) -> html.Div | None:
+    """Estado del cálculo del riesgo de la carga (HU-003, criterios 1 y 5)."""
+    if not estado:
+        return None
+    color = {EN_CURSO: COLOR_TEXTO_SECUNDARIO, COMPLETADO: COLOR_OK}.get(estado["estado"], COLOR_ERROR)
+    detalle = None
+    resumen = estado.get("resumen")
+    if estado["estado"] == COMPLETADO and resumen:
+        niveles = resumen.get("por_nivel", {})
+        partes = [f"Nivel {n}: {formato.entero(niveles.get(n, 0))}" for n in ("alto", "medio", "bajo")]
+        if "alertas_creadas" in resumen:
+            partes += [
+                f"Alertas nuevas: {formato.entero(resumen['alertas_creadas'])}",
+                f"Alertas actualizadas: {formato.entero(resumen['alertas_actualizadas'])}",
+            ]
+        detalle = html.Small(" · ".join(partes), style={"color": COLOR_TEXTO_SECUNDARIO})
+    return html.Div(
+        style={**ESTILO_TARJETA, "borderColor": color if color == COLOR_ERROR else COLOR_BORDE},
+        children=[
+            html.H3("Cálculo del riesgo", style={"marginTop": 0}),
+            html.P(estado["mensaje"], style={"color": color, "fontWeight": 600}),
+            detalle,
+        ],
+    )
+
+
 def mostrar_aviso(mensaje: str) -> html.Div:
     return html.Div(
         html.P(mensaje, style={"margin": 0}), style={**ESTILO_TARJETA, "borderColor": COLOR_ERROR}
@@ -231,11 +265,19 @@ def mostrar_nombre(nombre: str | None):
     return f"Archivo elegido: {nombre}" if nombre else ""
 
 
+def _sin_carga(contenido: html.Div, archivo: object = None) -> tuple:
+    """Salidas de `cargar` cuando no se guardó nada: sin recálculo."""
+    return contenido, None, no_update, archivo, None, True, no_update
+
+
 @callback(
     Output("resultado-carga", "children"),
     Output("errores-carga", "data"),
     Output("id-ultima-carga", "data"),
     Output("archivo-carga", "contents"),
+    Output("recalculo-carga", "children"),
+    Output("intervalo-recalculo", "disabled"),
+    Output("estado-recalculo", "data"),
     Input("boton-cargar", "n_clicks"),
     State("archivo-carga", "contents"),
     State("momento-carga", "value"),
@@ -244,32 +286,52 @@ def mostrar_nombre(nombre: str | None):
 )
 def cargar(_clics: int, contenido_upload: str | None, momento: str, usuario: str):
     if not contenido_upload:
-        return mostrar_aviso("Elegí un archivo CSV antes de cargar."), None, no_update, no_update
+        return _sin_carga(mostrar_aviso("Elegí un archivo CSV antes de cargar."), no_update)
     try:
         contenido_archivo = decodificar_archivo(contenido_upload)
     except (ValueError, IndexError):
-        return mostrar_aviso("No se pudo leer el archivo."), None, no_update, None
+        return _sin_carga(mostrar_aviso("No se pudo leer el archivo."))
     try:
         with obtener_fabrica_sesiones()() as sesion:
             resultado = registrar_carga(sesion, contenido_archivo, momento, usuario)
     except PermisoDenegado as error:
-        return mostrar_aviso(str(error)), None, no_update, None
+        return _sin_carga(mostrar_aviso(str(error)))
     except CargaRechazada as error:
-        return mostrar_rechazo(error), None, no_update, None
+        return _sin_carga(mostrar_rechazo(error))
     except SQLAlchemyError:
-        return (
-            mostrar_aviso("No se pudo guardar la carga: la base de datos no responde."),
-            None,
-            no_update,
-            None,
-        )
+        return _sin_carga(mostrar_aviso("No se pudo guardar la carga: la base de datos no responde."))
     errores = [e.__dict__ for e in resultado.errores]
+    estado = resultado.recalculo
     return (
         mostrar_resultado(resultado),
         {"id_carga": resultado.id_carga, "errores": errores},
         resultado.id_carga,
         None,
+        mostrar_recalculo(estado),
+        not (estado and estado["estado"] == EN_CURSO),  # se consulta mientras está en curso
+        estado,
     )
+
+
+@callback(
+    Output("recalculo-carga", "children", allow_duplicate=True),
+    Output("intervalo-recalculo", "disabled", allow_duplicate=True),
+    Output("estado-recalculo", "data", allow_duplicate=True),
+    Input("intervalo-recalculo", "n_intervals"),
+    State("id-ultima-carga", "data"),
+    prevent_initial_call=True,
+)
+def seguir_recalculo(_n: int, id_carga: int | None):
+    """Consulta el planificador hasta que el recálculo termina."""
+    if id_carga is None:
+        return no_update, True, no_update
+    estado = obtener_planificador().estado(id_carga)
+    if estado is None:
+        return no_update, True, no_update
+    if estado.estado not in TERMINALES:
+        return no_update, False, no_update
+    datos = estado.como_dict()
+    return mostrar_recalculo(datos), True, datos
 
 
 @callback(

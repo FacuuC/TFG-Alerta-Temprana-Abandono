@@ -27,6 +27,13 @@ cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
 
 - [ ] Sprint backlog, tarea 1.1: «contenedores Docker de la API, la base de datos y el
   panel» → la Figura 9 muestra dos contenedores (aplicación y datos).
+- [ ] Diagrama de Arquitectura (Figura 9): ubica los «modelos versionados (volumen de
+  archivos)» en el contenedor de datos. En el prototipo, el contenedor `db` guarda solo la
+  tabla MODELO (versión, momento, métricas, umbrales, habilitado). Los archivos de cada modelo
+  (`modelos/<momento>/v<versión>/`: pipeline y `metadatos.json`) están en el repositorio del
+  equipo anfitrión y se montan **de solo lectura** en el contenedor `app` (`/app/modelos`), que
+  es el único que los lee. No están en la imagen (`.dockerignore`) ni en un volumen con nombre.
+  Corregir el texto (o la figura) para que los modelos queden del lado de la aplicación.
 - [ ] Alcance del prototipo, ítem 3: «en cada ingesta de datos» → «en cada carga de datos».
 - [ ] Tabla 13 (Propuesta), fila «Registro del desempeño»: «La ingesta de datos» → «La
   carga de datos».
@@ -140,6 +147,39 @@ cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
   del documento; mencionarlo si se describe el diccionario de datos.
 - [ ] Figura 5: la pantalla real agrega «Estudiantes nuevos», «Ya existentes» y
   «Rendimientos semestrales agregados», y lista las columnas descartadas.
+
+## Recálculo del riesgo y alertas (HU-003 y HU-004, 05/11)
+
+- [ ] **Diccionario de datos / DER:** se agregaron dos restricciones, sin cambiar campos:
+  una sola predicción vigente por estudiante (índice único parcial sobre PREDICCION) y una
+  sola alerta por estudiante (decisión P3). Mencionarlas junto con «un solo modelo
+  habilitado por momento».
+- [ ] **FACTOR_EXPLICATIVO.valor** guarda el valor sin formatear («9500», «2», «13.9»): con
+  VARCHAR(40) no entran algunos textos comprensibles (por ejemplo, «curso complementario de
+  contabilidad y administración», 53 caracteres). La ficha lo muestra con su nombre y formato.
+- [ ] **METRICA_SUBGRUPO queda vacía en el prototipo:** las métricas por subgrupo están en
+  `reportes/informe_evaluacion.md` y solo las usaría el panel de métricas (HU-008, diseño
+  integral). MODELO sí se llena desde los metadatos al iniciar la plataforma.
+- [ ] **Figura 5 (carga):** el resultado agrega la tarjeta «Cálculo del riesgo» (en curso →
+  «Completado: modelo v1.0 (Cierre del 1.er semestre) · 885 estudiantes», con los estudiantes
+  por nivel y las alertas nuevas y actualizadas, o el motivo si no se calculó). La barra
+  superior muestra «Última actualización: dd/mm/aaaa hh:mm · modelo vX (momento)» para todos
+  los usuarios; la Figura 6 la muestra sin hora.
+- [ ] **Limitación: estado del recálculo en memoria.** Si la aplicación se reinicia, el motivo
+  de una carga sin modelo habilitado ya no se puede consultar (sí se mostró en la pantalla o
+  en la respuesta de la API, y queda en el registro de la aplicación). Lo que se calculó se
+  reconstruye desde la base.
+- [ ] **Limitación: cargas fuera de orden.** La estimación vigente es la de la última carga
+  (HU-003, criterio 3). Si se carga un archivo de cierre del 1.er semestre después de uno del
+  2.º, la vigente pasa a ser la de cierre_1s, con menos información.
+- [ ] **HU-003, criterio 5:** el motivo se informa al Área de Sistemas en el resultado de la
+  carga (pantalla y API) y en el registro de la aplicación. No hay aviso por otro canal, como
+  un correo; si el documento sugiere una notificación, aclararlo.
+- [ ] **Comprobación de punta a punta (05/11):** con los tres archivos simulados cargados en
+  orden, la plataforma deja 117, 134 y 137 estudiantes en nivel alto (13,2 / 15,1 / 15,5 % de
+  885, como en el informe de evaluación) y las 6 fichas del Anexo coinciden con su predicción
+  de cierre_1s (probabilidad, nivel y los 5 factores con sus contribuciones). Sirve para la
+  sección Demo: la plataforma reproduce lo evaluado.
 
 ## Objetivo 4: el cuestionario no se aplica (decisión del 05/11)
 

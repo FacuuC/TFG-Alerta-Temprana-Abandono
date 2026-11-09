@@ -161,7 +161,16 @@ class MetricaSubgrupo(Base):
 
 class Prediccion(Base):
     __tablename__ = "prediccion"
-    __table_args__ = (CheckConstraint("nivel IN ('alto', 'medio', 'bajo')", name="ck_prediccion_nivel"),)
+    __table_args__ = (
+        CheckConstraint("nivel IN ('alto', 'medio', 'bajo')", name="ck_prediccion_nivel"),
+        # Una sola predicción vigente por estudiante; las anteriores son su historial (HU-003, criterio 3)
+        Index(
+            "uq_prediccion_vigente_por_estudiante",
+            "codigo_estudiante",
+            unique=True,
+            postgresql_where=text("vigente"),
+        ),
+    )
 
     id_prediccion: Mapped[int] = mapped_column(Integer, primary_key=True)
     codigo_estudiante: Mapped[str] = mapped_column(String(12), ForeignKey("estudiante.codigo_estudiante"))
@@ -187,7 +196,11 @@ class FactorExplicativo(Base):
 
 class Alerta(Base):
     __tablename__ = "alerta"
-    __table_args__ = (CheckConstraint(f"estado IN ({_ESTADOS})", name="ck_alerta_estado"),)
+    __table_args__ = (
+        CheckConstraint(f"estado IN ({_ESTADOS})", name="ck_alerta_estado"),
+        # Una alerta por estudiante (decisión P3): al recalcular se actualiza, no se duplica
+        UniqueConstraint("codigo_estudiante", name="uq_alerta_estudiante"),
+    )
 
     id_alerta: Mapped[int] = mapped_column(Integer, primary_key=True)
     codigo_estudiante: Mapped[str] = mapped_column(String(12), ForeignKey("estudiante.codigo_estudiante"))

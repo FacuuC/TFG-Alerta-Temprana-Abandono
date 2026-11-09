@@ -70,7 +70,13 @@ def barra_superior(titulo: str) -> html.Header:
             "marginBottom": "24px",
         },
         children=[
-            html.H2(titulo, style={"margin": 0}),
+            html.Div(
+                [
+                    html.H2(titulo, style={"margin": 0}),
+                    # HU-003, criterio 4 (texto en ui/actualizacion.py)
+                    html.Small(id="ultima-actualizacion", style={"color": COLOR_TEXTO_SECUNDARIO}),
+                ]
+            ),
             html.Div(
                 style={"display": "flex", "alignItems": "center", "gap": "8px"},
                 children=[

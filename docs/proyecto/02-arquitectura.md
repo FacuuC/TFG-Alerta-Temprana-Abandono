@@ -33,10 +33,9 @@
 | Modelos versionados | Archivos en `modelos/<momento>/v<N>/` (modelo + metadatos JSON). Se entrenan con scripts en el entorno virtual y el contenedor los monta **de solo lectura** | `modelos/` |
 | Entrenamiento | Scripts de línea de comandos, no un botón de la interfaz (HU-002 la ejecuta el Área de Sistemas) | `scripts/`, `modelo/` |
 
-**Pendiente de confirmar** (ver `08-decisiones.md`): si los callbacks de Dash llaman a la
-API interna por HTTP o directamente a las funciones de servicio. Por defecto: llaman a
-las funciones de servicio, y la API expone las mismas funciones; así la «consulta
-interna» de la Figura 9 no agrega una llamada de red dentro del mismo proceso.
+**Confirmado el 05/11 (P4, ver `08-decisiones.md`):** los callbacks de Dash llaman
+directamente a las funciones de servicio, y la API expone las mismas funciones; así la
+«consulta interna» de la Figura 9 no agrega una llamada de red dentro del mismo proceso.
 
 ## Contenedores y redes (`compose.yaml`)
 
@@ -48,6 +47,7 @@ interna» de la Figura 9 no agrega una llamada de red dentro del mismo proceso.
   `0.0.0.0:8000`), control de salud contra `/salud`, espera a que la base esté sana.
 - `compose.dev.yaml` (solo desarrollo): publica la base en `127.0.0.1:5432` para usarla
   desde el entorno virtual (notebooks, scripts, `uvicorn --reload`).
+
 ## Entorno de demostración (07/11)
 
 La Figura 9 describe el despliegue integral en un servidor del proveedor SaaS. El
@@ -62,7 +62,6 @@ prototipo del Sprint 1 es, en cambio, un entorno de demostración acotado:
   llegan con HU-009.
 
 Ver `01-seguridad-y-privacidad.md`, «Entorno de demostración».
-
 
 ## Diferencias con el documento a corregir al final
 

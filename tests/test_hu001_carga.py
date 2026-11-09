@@ -208,9 +208,13 @@ def test_solo_el_area_de_sistemas_puede_cargar(sesion_db, ruta_fixtures, sin_eng
 def test_al_terminar_la_carga_se_avisa_a_las_funciones_registradas(sesion_db, ruta_fixtures, sin_enganches):
     """Punto de enganche para el recálculo de HU-003."""
     avisos = []
-    servicio.registrar_al_terminar_carga(lambda id_carga, momento: avisos.append((id_carga, momento)) or "ok")
+    servicio.registrar_al_terminar_carga(
+        lambda id_carga, momento, codigos: avisos.append((id_carga, momento, codigos)) or "ok"
+    )
     resultado = servicio.registrar_carga(
         sesion_db, _leer(ruta_fixtures, "inscripcion_valida.csv"), M.INSCRIPCION, "sistemas01", CLAVE
     )
-    assert avisos == [(resultado.id_carga, M.INSCRIPCION)]
+    codigos = [S.codigo_estudiante(f"T{n:04d}", CLAVE) for n in range(1, 11)]
+    assert avisos == [(resultado.id_carga, M.INSCRIPCION, codigos)]
     assert resultado.al_terminar == ["ok"]
+    assert resultado.recalculo is None  # solo lo completa el planificador de HU-003

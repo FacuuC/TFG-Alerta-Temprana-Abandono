@@ -31,11 +31,14 @@ class Factor:
         return self.contribucion > 0
 
 
-def valores_shap_por_variable(pipeline: Pipeline, x: pd.DataFrame, fondo: pd.DataFrame) -> pd.DataFrame:
+def valores_shap_por_variable(
+    pipeline: Pipeline, x: pd.DataFrame, fondo: pd.DataFrame | None = None
+) -> pd.DataFrame:
     """Matriz estudiantes × variables originales con el valor SHAP de cada variable.
 
     `fondo` es el conjunto de referencia (entrenamiento) que usa el explicador lineal
-    cuando el modelo elegido es la regresión logística; XGBoost no lo necesita.
+    cuando el modelo elegido es la regresión logística; XGBoost no lo necesita, y la
+    plataforma, que no tiene los datos de entrenamiento, no lo pasa.
     """
     preprocesador = pipeline.named_steps["preprocesador"]
     modelo = pipeline.named_steps["modelo"]
@@ -43,6 +46,11 @@ def valores_shap_por_variable(pipeline: Pipeline, x: pd.DataFrame, fondo: pd.Dat
     if modelo.__class__.__name__ == "XGBClassifier":
         explicador = shap.TreeExplainer(modelo)
     else:
+        if fondo is None:
+            raise ValueError(
+                "La explicación de una regresión logística necesita el conjunto de entrenamiento "
+                "como referencia (fondo)."
+            )
         fondo_t = preprocesador.transform(fondo)
         explicador = shap.LinearExplainer(modelo, shap.maskers.Independent(fondo_t, max_samples=len(fondo_t)))
     valores = np.asarray(explicador.shap_values(xt))

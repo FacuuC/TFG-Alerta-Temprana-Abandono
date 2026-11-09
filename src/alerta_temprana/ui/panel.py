@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import dash
 
-from alerta_temprana.ui import carga  # registra los callbacks de la pantalla de carga
+from alerta_temprana.ui import (
+    actualizacion,  # noqa: F401  (última actualización en la barra superior)
+    carga,  # registra los callbacks de la pantalla de carga
+)
 from alerta_temprana.ui.diseno import pagina
 
 

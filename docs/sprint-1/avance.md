@@ -16,6 +16,9 @@ terminar cada historia, sumar una fila. Puntos totales: 45.
 | 05/11 | HU-001: verificación manual | En progreso | 13 | 32 | Las 5 pruebas manuales de la pantalla pasaron (Facundo). Se mantiene la `SEUDONIMO_CLAVE` actual: se quitó la prueba de los códigos de las fichas. 144 pruebas en verde. Falta: `/revisar-hu` y commit |
 | 05/11 | Decisión del tutor: el cuestionario no se aplica | — | 13 | 32 | El instrumento (formulario y 6 fichas) va al Anexo; el objetivo 4 se informa con lo que se entrega (ver `08-decisiones.md`, 05/11). La tarea 6.4 queda sin aplicación ni análisis |
 | 05/11 | HU-001 | Terminada | 21 | 24 | Criterios 1 a 5 cumplidos (revisión con evidencia); verificación manual de la pantalla en verde; 144 pruebas en verde. La base de desarrollo no se vacía ahora: es el primer paso de la verificación de HU-003 (`README.md`, «Datos para la Demo») |
+| 05/11 | HU-003 (3.1 a 3.3) + HU-004 (4.2) | En progreso | 21 | 24 | P3 y P4 confirmadas. MODELO se llena desde `modelos/`, servicio de predicción, planificador en segundo plano, alertas (P3), estado del recálculo en la carga y última actualización en la barra superior. De punta a punta con `data/cargas/`: 117 / 134 / 137 en nivel alto (como el informe) y las 6 fichas coinciden. 196 pruebas en verde. Falta: verificación manual, `/revisar-hu` y commit |
+| 09/11 | HU-003 | Terminada | 26 | 19 | Criterios 1 a 5 cumplidos (revisión con evidencia); verificación manual del recálculo en verde (Facundo); el criterio 5 se verifica con pruebas automáticas. 198 pruebas en verde |
+| 09/11 | HU-004 | Terminada | 29 | 16 | Criterios 1 a 4 cumplidos (1 en HU-002; 2 a 4 en el servicio de predicción, con alertas según P3); criterio 5 informado como no alcanzado en prueba, sin reajustar (decisión del 04/11). Se sumaron las pruebas de la tarea 3.3 de carga rechazada y de conservación del estado de seguimiento entre cargas. 198 pruebas en verde |
 
 ### Verificación manual de la pantalla de carga (HU-001)
 
@@ -41,14 +44,44 @@ http://127.0.0.1:8000:
 Resultado (05/11, Facundo): **las 5 pruebas pasaron.** Los tres archivos simulados quedaron
 cargados en la base de desarrollo con la `SEUDONIMO_CLAVE` actual.
 
+### Verificación manual del recálculo (HU-003 y HU-004)
+
+Primer paso de «Datos para la Demo» (`README.md`): **vaciar la base** (borra las cargas de
+la verificación de HU-001 y los 7 estudiantes sintéticos) y levantarla de nuevo; generar
+los archivos y arrancar la app. Al iniciar, la app crea las tablas con las restricciones
+nuevas y registra los tres modelos en MODELO.
+
+1. Antes de cargar, con cualquier usuario: la barra superior dice «Todavía no se calculó el
+   riesgo.».
+2. Con «Área de Sistemas (sistemas01)», cargar `exportacion_inscripcion.csv` como
+   «Inscripción» → la tarjeta «Cálculo del riesgo» dice «en curso…» y en unos segundos
+   «Completado: modelo v1.0 (Inscripción) · 885 estudiantes», con nivel alto 117, medio
+   359, bajo 409, 476 alertas nuevas y 0 actualizadas. La barra superior pasa a «Última
+   actualización: dd/mm/aaaa hh:mm · modelo v1.0 (Inscripción)».
+3. `exportacion_cierre_1s.csv` como «Cierre del 1.er semestre» → «Completado: modelo v1.0
+   (Cierre del 1.er semestre)»: alto 134, medio 162, bajo 589; 47 alertas nuevas y 476
+   actualizadas. La barra superior cambia al modelo de cierre_1s.
+4. `exportacion_cierre_2s.csv` como «Cierre del 2.º semestre» → alto 137, medio 131, bajo
+   617; 6 alertas nuevas y 523 actualizadas (529 alertas en total).
+5. Elegir «Tutor/a (tutor01)» → la barra superior sigue mostrando la última actualización.
+6. Por la API: `curl.exe http://127.0.0.1:8000/api/predicciones/ultima-actualizacion` →
+   versión `1.0`, momento `cierre_2s`; `curl.exe http://127.0.0.1:8000/api/cargas/3/recalculo`
+   → `completado`.
+
+El criterio 5 (sin modelo habilitado) se verifica solo con las pruebas automáticas
+(decisión de Facundo, 05/11).
+
+Resultado (09/11, Facundo): **los 6 pasos pasaron.** La base de desarrollo queda con las
+tres cargas simuladas, en orden, y sin los estudiantes sintéticos.
+
 ## Estado de las historias
 
 | ID | Puntos | Estado | Commit |
 |---|---|---|---|
 | HU-001 | 8 | Terminada | «HU-001: carga, validación y seudonimización…» (05/11) |
 | HU-002 | 13 | Terminada | «HU-002: evaluación final sobre prueba…» (04/11) |
-| HU-003 | 5 | Por hacer | |
-| HU-004 | 3 | Por hacer | |
+| HU-003 | 5 | Terminada | «HU-003 y HU-004: recálculo automático del riesgo…» (09/11) |
+| HU-004 | 3 | Terminada | «HU-003 y HU-004: recálculo automático del riesgo…» (09/11) |
 | HU-005 | 5 | Por hacer | |
 | HU-006 | 8 | Por hacer | |
 | HU-007 | 3 | Por hacer | |

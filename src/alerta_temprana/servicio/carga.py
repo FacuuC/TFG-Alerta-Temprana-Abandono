@@ -11,8 +11,9 @@
    (criterio 5), los estudiantes nuevos y los rendimientos semestrales que falten.
    Un estudiante que ya existe no se duplica ni se modifica, y un rendimiento ya
    cargado no se sobrescribe (no hay edición de datos cargados).
-4. Al terminar, se avisa a las funciones registradas con `registrar_al_terminar_carga`
-   (punto de enganche para el recálculo de HU-003).
+4. Al terminar, se avisa a las funciones registradas con `registrar_al_terminar_carga`,
+   con los códigos de todos los registros válidos de la carga: así el planificador de
+   HU-003 recalcula el riesgo de cada estudiante incorporado (servicio/planificador.py).
 """
 
 from __future__ import annotations
@@ -52,7 +53,8 @@ class ResultadoCarga:
     rendimientos_agregados: int
     errores: list[ErrorRegistro] = field(default_factory=list)
     columnas_descartadas: dict[str, list[str]] = field(default_factory=dict)
-    al_terminar: list[object] = field(default_factory=list)  # lo que devuelvan las funciones de HU-003
+    al_terminar: list[object] = field(default_factory=list)  # lo que devuelvan las funciones enganchadas
+    recalculo: dict | None = None  # estado del recálculo del riesgo (HU-003), si hay planificador
 
     def como_dict(self) -> dict:
         datos = asdict(self)
@@ -62,13 +64,13 @@ class ResultadoCarga:
 
 # --- Punto de enganche para el recálculo (HU-003) ------------------------------------
 
-AlTerminarCarga = Callable[[int, V.Momento], object]
+AlTerminarCarga = Callable[[int, V.Momento, list[str]], object]
 _al_terminar_carga: list[AlTerminarCarga] = []
 
 
 def registrar_al_terminar_carga(funcion: AlTerminarCarga) -> AlTerminarCarga:
-    """Registra una función que se llama con (id_carga, momento) después de cada carga
-    guardada. Se puede usar como decorador."""
+    """Registra una función que se llama con (id_carga, momento, códigos de los registros
+    válidos) después de cada carga guardada. Se puede usar como decorador."""
     if funcion not in _al_terminar_carga:
         _al_terminar_carga.append(funcion)
     return funcion
@@ -197,7 +199,13 @@ def registrar_carga(
         errores=procesado.errores,
         columnas_descartadas=procesado.columnas_descartadas,
     )
-    resultado.al_terminar = [funcion(carga.id_carga, momento) for funcion in list(_al_terminar_carga)]
+    codigos_validos = [str(c) for c in procesado.estudiantes["codigo_estudiante"]]
+    resultado.al_terminar = [
+        funcion(carga.id_carga, momento, codigos_validos) for funcion in list(_al_terminar_carga)
+    ]
+    resultado.recalculo = next(
+        (r for r in resultado.al_terminar if isinstance(r, dict) and "estado" in r), None
+    )
     return resultado
 
 
