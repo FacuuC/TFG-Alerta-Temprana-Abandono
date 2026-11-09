@@ -8,6 +8,11 @@ errores se arma en memoria y no se guarda en la base.
 Después de una carga válida, el riesgo se recalcula en segundo plano (HU-003): la
 pantalla muestra «en curso» y consulta el planificador cada segundo hasta que termina
 («Completado: modelo v1.0 (…)») o informa el motivo por el que no se calculó.
+
+Los callbacks llaman directamente a las funciones de servicio/, las mismas que expone
+`POST /api/cargas` (decisión P4). El usuario de prueba elegido en la barra superior es
+el que queda registrado en CARGA; el servicio controla que sea del Área de Sistemas
+(decisión P5, que no es un control de acceso: HU-009).
 """
 
 from __future__ import annotations

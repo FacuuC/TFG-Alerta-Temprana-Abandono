@@ -3,7 +3,9 @@
 Arquitectura del documento (Figura 9): el contenedor de la aplicación reúne la
 interfaz en Dash, la API en FastAPI, el planificador y el servicio de
 predicción. Dash corre sobre Flask (WSGI), por eso se monta dentro de FastAPI
-con a2wsgi. Las rutas de la API se registran antes del montaje de Dash.
+con a2wsgi. Las rutas de la API se registran antes del montaje de Dash. Las dos capas
+llaman a las mismas funciones de servicio/ (decisión P4). En Docker se publica solo en
+127.0.0.1:8000 (compose.yaml): sin inicio de sesión (HU-009) no debe verse en la red.
 
 Al iniciar se crean las tablas que falten y los usuarios de prueba (tarea 1.2), se
 registran en MODELO los modelos de `modelos/` y se engancha el planificador a cada carga,

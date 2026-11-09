@@ -17,6 +17,10 @@ alertas que muestra la tabla. La tabla no se vuelve a armar: con 529 alertas eso
 unos 2,5 s por guardado (medición del 09/11), y el desplegable ya muestra el estado nuevo.
 Con un filtro de estado activo, la fila guardada sigue a la vista hasta que cambie un
 filtro o el usuario; ahí la tabla se vuelve a consultar.
+
+Decisiones: P3 (una alerta por estudiante; el listado sin filtro por defecto es su
+modificación del 07/11) y P4 (los callbacks usan las mismas funciones que la API).
+En el Sprint 1 el tutor ve todas las alertas: la asignación a tutores es HU-011.
 """
 
 from __future__ import annotations

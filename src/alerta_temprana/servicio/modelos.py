@@ -12,6 +12,8 @@
   exactamente las del momento (regla de «sin información futura»).
 
 Los modelos se leen, nunca se reentrenan ni se escriben (modelo congelado de cierre_1s).
+Cada versión vive en `modelos/<momento>/v<versión>/` con su pipeline y `metadatos.json`,
+versionados en Git (decisión P6) y montados de solo lectura en el contenedor `app`.
 """
 
 from __future__ import annotations

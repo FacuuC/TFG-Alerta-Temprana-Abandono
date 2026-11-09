@@ -18,6 +18,12 @@ data/raw/*
 data/procesados/*
 data/cargas/*
 !data/**/.gitkeep
+# Sí se versionan (los necesita un clon nuevo, ver data/README.md): la partición fija
+# (índice y conjunto, sin la variable objetivo) y los tres archivos de carga simulados.
+!data/procesados/particion.csv
+!data/cargas/exportacion_inscripcion.csv
+!data/cargas/exportacion_cierre_1s.csv
+!data/cargas/exportacion_cierre_2s.csv
 
 # Respaldos de la base (pueden tener datos)
 respaldos/

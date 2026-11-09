@@ -5,6 +5,10 @@ reemplaza el legajo por el código seudonimizado y descarta todo lo que el model
 momento no usa (criterio 4): identificatorias, excluidas, variables de momentos
 posteriores y cualquier otra columna. Devuelve las filas listas para ESTUDIANTE y
 RENDIMIENTO_SEMESTRE. El guardado está en servicio/carga.py.
+
+El formato aceptado (separado por «;», UTF-8, punto decimal, nombres de columnas de la
+plataforma) es el de los archivos simulados de `data/cargas/` (decisión P2); el código
+seudonimizado es el de la decisión P1 (datos/seudonimizacion.py).
 """
 
 from __future__ import annotations

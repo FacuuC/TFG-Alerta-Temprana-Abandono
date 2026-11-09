@@ -4,6 +4,9 @@ El desplegable con los tres estados y el botón para guardar. Al guardar, los ca
 llaman a `guardar_estado`, que usa la función de servicio (`cambiar_estado`, la misma de
 la API) y arma el mensaje de confirmación o el motivo del rechazo. Las fechas se guardan
 en UTC y acá se muestran en hora argentina (dd/mm/aaaa hh:mm).
+
+Decisiones: P4 (misma función que `POST /api/alertas/{id}/estado`) y P5 (el usuario de
+prueba elegido queda registrado en CAMBIO_ESTADO; solo Coordinación y Tutor/a).
 """
 
 from __future__ import annotations
