@@ -30,14 +30,22 @@ from alerta_temprana.datos import variables as V
 from alerta_temprana.datos.carga import procesar_archivo
 from alerta_temprana.datos.validacion import ErrorRegistro
 from alerta_temprana.db.inicializacion import ROL_AREA_SISTEMAS
-from alerta_temprana.db.tablas import Carga, Estudiante, RendimientoSemestre, Rol, Usuario
+from alerta_temprana.db.tablas import Carga, Estudiante, RendimientoSemestre, Usuario
+from alerta_temprana.servicio.usuarios import PermisoDenegado, comprobar_usuario
+
+# PermisoDenegado se sigue exportando desde acá (lo usan la API y la pantalla de carga)
+__all__ = [
+    "PermisoDenegado",
+    "ResultadoCarga",
+    "comprobar_usuario_de_carga",
+    "listar_cargas",
+    "quitar_al_terminar_carga",
+    "registrar_al_terminar_carga",
+    "registrar_carga",
+]
 
 _BINARIAS = set(V.BINARIAS)
 _DECIMALES = {"tasa_desempleo", "tasa_inflacion", "variacion_pib", "nota_titulo_previo", "nota_promedio"}
-
-
-class PermisoDenegado(Exception):
-    """El usuario de prueba elegido no puede hacer cargas."""
 
 
 @dataclass
@@ -86,19 +94,14 @@ def quitar_al_terminar_carga(funcion: AlTerminarCarga) -> None:
 
 def comprobar_usuario_de_carga(sesion: Session, nombre_usuario: str) -> Usuario:
     """El usuario tiene que existir, estar activo y ser del Área de Sistemas."""
-    fila = sesion.execute(
-        select(Usuario, Rol.nombre)
-        .join(Rol, Usuario.id_rol == Rol.id_rol)
-        .where(Usuario.nombre_usuario == nombre_usuario)
-    ).first()
-    if fila is None or not fila[0].activo:
-        raise PermisoDenegado(f"El usuario «{nombre_usuario}» no existe o no está activo.")
-    usuario, rol = fila
-    if rol != ROL_AREA_SISTEMAS:
-        raise PermisoDenegado(
-            f"La carga de datos es del Área de Sistemas de Información; «{nombre_usuario}» tiene el rol «{rol}»."
-        )
-    return usuario
+    return comprobar_usuario(
+        sesion,
+        nombre_usuario,
+        (ROL_AREA_SISTEMAS,),
+        lambda nombre, rol: (
+            f"La carga de datos es del Área de Sistemas de Información; «{nombre}» tiene el rol «{rol}»."
+        ),
+    )
 
 
 # --- Carga ----------------------------------------------------------------------------

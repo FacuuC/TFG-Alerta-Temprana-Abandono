@@ -10,6 +10,9 @@ FACTOR_EXPLICATIVO.valor guarda el valor de la variable sin formatear («9853»,
 fila del estudiante (armada con las variables del momento del modelo) solo aporta lo que
 el texto necesita de otra variable, por ejemplo las materias inscriptas de «1 de 6».
 
+El seguimiento incluye el estado actual, la fecha de creación de la alerta y sus cambios de
+estado con usuario y fecha (CAMBIO_ESTADO; HU-007).
+
 Si algún factor no corresponde al momento del modelo (una variable excluida, o una `_s2`
 en un cálculo de cierre del 1.er semestre) o no hay exactamente cinco, la ficha se
 devuelve **sin factores**: no se muestra ninguno y el detalle queda en el registro de la
@@ -27,6 +30,7 @@ from alerta_temprana.datos import variables as V
 from alerta_temprana.db.tablas import Alerta, Estudiante, FactorExplicativo, Modelo, Prediccion
 from alerta_temprana.modelo.etiquetas import CARRERA, SENTIDO_FACTOR, texto_factor
 from alerta_temprana.servicio.prediccion import CANTIDAD_FACTORES, armar_datos
+from alerta_temprana.servicio.seguimiento import historial_estados
 
 registro = logging.getLogger(__name__)
 
@@ -132,4 +136,5 @@ def consultar_ficha(sesion: Session, id_alerta: int) -> dict | None:
         "factores": factores,
         "estado": alerta.estado,
         "fecha_creacion": alerta.fecha_creacion,
+        "cambios_estado": historial_estados(sesion, alerta.id_alerta),  # HU-007, criterio 2
     }

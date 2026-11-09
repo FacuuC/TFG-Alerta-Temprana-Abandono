@@ -406,6 +406,7 @@ def _ficha(**cambios) -> dict:
         "factores": factores,
         "estado": "pendiente",
         "fecha_creacion": FECHA_ALERTA,
+        "cambios_estado": [],  # HU-007
     }
     return base | cambios
 
@@ -505,7 +506,8 @@ def test_pantalla_tiene_enlace_al_listado_y_seguimiento():
     componentes = _por_id(_contenido())
     assert componentes["volver-listado"].href == "/listado"
     seguimiento = _texto(componentes["ficha-seguimiento"])
-    assert "Pendiente" in seguimiento and "Alerta creada el 08/11/2026" in seguimiento
+    assert "Alerta creada el 08/11/2026" in seguimiento
+    assert componentes["ficha-estado"].value == "pendiente"  # desplegable desde HU-007
 
 
 def test_carrera_nocturna_no_repite_el_turno():

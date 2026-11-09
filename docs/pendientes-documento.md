@@ -20,8 +20,10 @@ cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
 - [ ] Figura 7 (ficha real, HU-006, 09/11): la tarjeta «Cálculo» muestra fecha **y hora**
   («08/11/2026 23:57 · modelo v1.0 (Cierre del 2.º semestre)»), igual que la última
   actualización de la barra superior; arriba hay un enlace «← Volver al listado»; el título
-  es «Ficha del estudiante EST-…». La sección «Seguimiento» muestra el estado como texto
-  hasta HU-007 (desplegable y «Guardar estado»).
+  es «Ficha del estudiante EST-…». La sección «Seguimiento» (HU-007) tiene el desplegable,
+  «Guardar estado» y «Alerta creada el…», como la figura, y además el mensaje de
+  confirmación y la línea «Último cambio: Pendiente → Contactado, por tutor01, el
+  dd/mm/aaaa hh:mm» (ver «Seguimiento», más abajo).
 - [ ] Figura 7 y Anexo: la ficha muestra la predicción **vigente** (con las tres cargas de
   la Demo, la de cierre del 2.º semestre), mientras que las seis fichas del Anexo son de
   cierre del 1.er semestre. Los PNG del Anexo no se reemplazan por capturas. Con solo las
@@ -207,6 +209,32 @@ cuando lleguen. Al implementar, sumá acá cualquier diferencia nueva.
   885, como en el informe de evaluación) y las 6 fichas del Anexo coinciden con su predicción
   de cierre_1s (probabilidad, nivel y los 5 factores con sus contribuciones). Sirve para la
   sección Demo: la plataforma reproduce lo evaluado.
+
+## Seguimiento de las alertas (HU-007, 09/11)
+
+- [ ] **HU-007, criterios 4 a 6:** el Word ya tiene los seis criterios (correcciones del
+  tutor); `sprint-1/HU-007.md` se actualizó con ese texto. El sprint backlog (tarea 7.1,
+  «conservarlo al recalcular») sigue valiendo: lo cubre la regla P3 sin cambios.
+- [ ] **Figura 6 (listado):** cada fila tiene el desplegable del estado y un botón
+  «Guardar» (la figura muestra solo el desplegable), para que un clic sin querer no quede
+  registrado como cambio. Al guardar aparece un mensaje de confirmación arriba de la tabla
+  y se actualizan las tarjetas.
+- [ ] **Sección Seguridad («registra quién y cuándo cambió cada estado»):** queda en la
+  tabla **CAMBIO_ESTADO** del DER (estado anterior, estado nuevo, usuario y fecha y hora,
+  guardada en UTC y mostrada en hora argentina); ALERTA.estado guarda solo el estado actual.
+  El DER no cambia.
+- [ ] **Reglas del cambio de estado (decisión del 09/11):** si el estado nuevo es igual al
+  actual, no se registra nada; se puede volver a «pendiente», y ese cambio también queda
+  registrado. Solo Coordinación y Tutor/a pueden cambiar el estado (la API responde 403 a los
+  demás roles), con la misma salvedad que la carga: sin inicio de sesión, el selector de
+  usuario no es un control de acceso (HU-009).
+- [ ] **Limitación: el tutor puede cambiar el estado de cualquier alerta**, no solo de sus
+  estudiantes, porque la asignación a tutores es HU-011 (sumarlo a la aclaración de la
+  Figura 6 sobre el listado).
+- [ ] **Limitación: rendimiento del listado con muchas alertas.** Con las 529 alertas de la
+  Demo, cada desplegable de estado hace que cambiar o quitar un filtro tarde unos 2 a 3
+  segundos en el navegador (medido el 09/11 en Chrome: 2,4–2,7 s, frente a 0,6 s sin
+  desplegables). Para volúmenes mayores, el diseño integral debería paginar el listado.
 
 ## Objetivo 4: el cuestionario no se aplica (decisión del 05/11)
 

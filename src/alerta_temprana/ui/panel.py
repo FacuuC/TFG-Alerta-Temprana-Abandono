@@ -1,4 +1,5 @@
-"""Panel de Dash: carga (HU-001), listado de alertas (HU-005) y ficha del estudiante (HU-006).
+"""Panel de Dash: carga (HU-001), listado de alertas (HU-005 y HU-007) y ficha del estudiante
+(HU-006 y HU-007).
 
 El layout común tiene el menú lateral (según el usuario de prueba), la barra superior
 con el selector y la última actualización, y el estado del último recálculo. El contenido
@@ -42,7 +43,7 @@ from alerta_temprana.ui.diseno import (
 
 def contenido_metricas() -> list:
     """Pantalla de la Secretaría Académica: solo el aviso, sin listado ni formulario de carga."""
-    return [html.Div(html.P(AVISO_SIN_PANTALLAS, style={"margin": 0}), style=ESTILO_TARJETA)]
+    return [html.Div(html.P(AVISO_SIN_PANTALLAS, style={"margin": 0}), id="aviso-metricas", style=ESTILO_TARJETA)]
 
 
 _CONTENIDO = {RUTA_CARGA: carga.contenido, RUTA_LISTADO: listado.contenido, RUTA_METRICAS: contenido_metricas}

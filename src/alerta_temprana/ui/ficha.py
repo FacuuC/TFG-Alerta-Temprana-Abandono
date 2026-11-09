@@ -5,8 +5,9 @@ volver al listado y las tarjetas de probabilidad de abandono, nivel de urgencia,
 y turno, y cálculo (fecha y hora · modelo). Debajo, «Factores que más pesan en esta
 estimación»: los cinco factores con nombre y valor comprensibles, una barra proporcional
 al peso y «Aumenta el riesgo» (rojo) o «Disminuye el riesgo» (azul), seguidos del aviso
-del criterio 4. Al final, el seguimiento de la alerta, solo como texto: el desplegable y
-«Guardar estado» son de HU-007.
+del criterio 4. Al final, «Seguimiento» (HU-007, tarea 7.2): el desplegable del estado,
+«Guardar estado», el mensaje de confirmación, el último cambio (usuario y fecha y hora en
+hora argentina) y «Alerta creada el dd/mm/aaaa».
 
 Diferencias con el prototipo dibujado que no se copian (06-pantallas.md): el título dice
 «más pesan» (no «más influyen»), no aparece ninguna variable excluida y el aviso aclara
@@ -17,7 +18,7 @@ La consulta está en servicio/ficha.py; acá solo se presenta el resultado.
 
 from __future__ import annotations
 
-from dash import dcc, html
+from dash import Input, Output, State, callback, dcc, html, no_update
 from sqlalchemy.exc import SQLAlchemyError
 
 from alerta_temprana import formato
@@ -25,13 +26,13 @@ from alerta_temprana.datos.variables import ETIQUETA_MOMENTO, Momento
 from alerta_temprana.db.sesion import obtener_fabrica_sesiones
 from alerta_temprana.modelo.etiquetas import AVISO_FICHA, TITULO_FACTORES
 from alerta_temprana.servicio.ficha import consultar_ficha
+from alerta_temprana.ui import seguimiento as control
 from alerta_temprana.ui.diseno import (
     COLOR_BORDE,
     COLOR_ERROR,
     COLOR_SENTIDO,
     COLOR_TEXTO_SECUNDARIO,
     ESTILO_TARJETA,
-    ETIQUETA_ESTADO,
     RUTA_LISTADO,
     etiqueta_nivel,
 )
@@ -42,6 +43,7 @@ SIN_ALERTA = "No se encontró la alerta."
 SIN_BASE = "No se pudo consultar la base de datos."
 SIN_EXPLICACION = "No se puede mostrar la explicación de esta alerta."
 ETIQUETA_TURNO = {"diurno": "Diurno", "nocturno": "Nocturno"}
+GUARDAR_ESTADO = "Guardar estado"
 
 
 def _leer_ficha(id_alerta: int) -> dict | None:
@@ -64,11 +66,13 @@ def pantalla(id_alerta: int) -> tuple[str, list]:
 
 
 def enlace_volver() -> html.Div:
-    return html.Div(dcc.Link(VOLVER, href=RUTA_LISTADO, id="volver-listado"), style={"marginBottom": "16px"})
+    return html.Div(
+        dcc.Link(VOLVER, href=RUTA_LISTADO, id="volver-listado"), id="ficha-volver", style={"marginBottom": "16px"}
+    )
 
 
 def _mensaje(texto: str) -> html.Div:
-    return html.Div(html.P(texto, style={"margin": 0}), style=ESTILO_TARJETA)
+    return html.Div(html.P(texto, style={"margin": 0}), id="ficha-mensaje", style=ESTILO_TARJETA)
 
 
 def _tarjeta(titulo: str, *valor, id_: str) -> html.Div:
@@ -91,6 +95,7 @@ def texto_modelo(version: str, momento: str) -> str:
 def tarjetas(ficha: dict) -> html.Div:
     fecha = formato.fecha_hora(formato.hora_argentina(ficha["fecha_calculo"]))
     return html.Div(
+        id="ficha-tarjetas",
         style={"display": "flex", "flexWrap": "wrap", "gap": "20px", "marginBottom": "20px"},
         children=[
             _tarjeta(
@@ -190,20 +195,70 @@ def factores(lista: list[dict] | None) -> html.Div:
 
 
 def seguimiento(ficha: dict) -> html.Div:
-    """Seguimiento de la alerta, solo lectura (el cambio de estado es HU-007)."""
+    """Seguimiento de la alerta (Figura 7; HU-007): estado editable, último cambio y creación."""
     creada = formato.fecha(formato.hora_argentina(ficha["fecha_creacion"]))
     return html.Div(
         id="ficha-seguimiento",
         style=ESTILO_TARJETA,
         children=[
             html.H3("Seguimiento", style={"marginTop": 0}),
-            html.Div(["Estado: ", html.Strong(ETIQUETA_ESTADO[ficha["estado"]])]),
+            dcc.Store(id="ficha-id-alerta", data=ficha["id_alerta"]),
             html.Div(
-                f"Alerta creada el {creada}", style={"color": COLOR_TEXTO_SECUNDARIO, "marginTop": "4px"}
+                style={"display": "flex", "flexWrap": "wrap", "alignItems": "flex-end", "gap": "16px"},
+                children=[
+                    html.Div(
+                        [
+                            html.Label("Estado", htmlFor="ficha-estado", style={"display": "block"}),
+                            control.desplegable_estado("ficha-estado", ficha["estado"], ancho="260px"),
+                        ]
+                    ),
+                    control.boton_guardar("boton-guardar-estado", GUARDAR_ESTADO, relleno="9px 20px"),
+                    html.Div(
+                        f"Alerta creada el {creada}",
+                        id="ficha-creada",
+                        style={"color": COLOR_TEXTO_SECUNDARIO, "marginLeft": "auto"},
+                    ),
+                ],
             ),
+            html.Div(id="mensaje-estado-ficha"),
+            html.Div(control.ultimo_cambio(ficha["cambios_estado"]), id="ficha-ultimo-cambio"),
         ],
     )
 
 
 def contenido(ficha: dict) -> list:
     return [enlace_volver(), tarjetas(ficha), factores(ficha["factores"]), seguimiento(ficha)]
+
+
+# --- Callback (HU-007) ---------------------------------------------------------------------
+
+
+def resultado_guardado(id_alerta: int, estado: str | None, usuario: str | None) -> tuple:
+    """(mensaje, último cambio) después de guardar; el último cambio solo cambia si se
+    registró un cambio."""
+    guardado = control.guardar_estado(id_alerta, estado, usuario)
+    resultado = guardado.resultado
+    if resultado is None or not resultado.registrado:
+        return guardado.mensaje, no_update
+    cambio = {
+        "estado_anterior": resultado.estado_anterior,
+        "estado_nuevo": resultado.estado_nuevo,
+        "usuario": resultado.usuario,
+        "fecha": resultado.fecha,
+    }
+    return guardado.mensaje, control.ultimo_cambio([cambio])
+
+
+@callback(
+    Output("mensaje-estado-ficha", "children"),
+    Output("ficha-ultimo-cambio", "children"),
+    Input("boton-guardar-estado", "n_clicks"),
+    State("ficha-estado", "value"),
+    State("ficha-id-alerta", "data"),
+    State("usuario-prueba", "value"),
+    prevent_initial_call=True,
+)
+def guardar_desde_ficha(clics, estado, id_alerta, usuario):
+    if not clics or id_alerta is None:
+        return no_update, no_update
+    return resultado_guardado(id_alerta, estado, usuario)

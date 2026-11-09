@@ -90,13 +90,14 @@ def contenido() -> list:
                 html.Button("Validar y cargar", id="boton-cargar", n_clicks=0, style={"padding": "8px 20px"}),
             ],
         ),
-        dcc.Loading(html.Div(id="resultado-carga")),
+        dcc.Loading(html.Div(id="resultado-carga"), id="carga-en-curso"),
         html.Div(id="recalculo-carga"),
         dcc.Interval(id="intervalo-recalculo", interval=1000, disabled=True),
         dcc.Store(id="errores-carga"),
         dcc.Store(id="id-ultima-carga"),
         dcc.Download(id="descarga-informe"),
         html.Div(
+            id="cargas-anteriores",
             style=ESTILO_TARJETA,
             children=[
                 html.H3("Cargas anteriores", style={"marginTop": 0}),

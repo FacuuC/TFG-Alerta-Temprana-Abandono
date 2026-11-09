@@ -8,13 +8,20 @@ desplazamiento y encabezado fijo.
 
 El callback solo arma los filtros, llama a servicio/alertas.py y muestra el resultado:
 el orden y los filtros están en la consulta. Cada fila tiene «Ver ficha», que abre la
-ficha de la alerta (HU-006) sin recargar la página. El desplegable del estado es de
-HU-007; acá el estado se muestra como texto.
+ficha de la alerta (HU-006) sin recargar la página.
+
+Estado de seguimiento (HU-007, tarea 7.2): cada fila tiene el desplegable con el estado
+actual y «Guardar». Al guardar se llama a `cambiar_estado` (ui/seguimiento.py), aparece el
+mensaje de confirmación arriba de la tabla y se actualizan las tarjetas, sobre las mismas
+alertas que muestra la tabla. La tabla no se vuelve a armar: con 529 alertas eso tarda
+unos 2,5 s por guardado (medición del 09/11), y el desplegable ya muestra el estado nuevo.
+Con un filtro de estado activo, la fila guardada sigue a la vista hasta que cambie un
+filtro o el usuario; ahí la tabla se vuelve a consultar.
 """
 
 from __future__ import annotations
 
-from dash import Input, Output, callback, dcc, html
+from dash import ALL, Input, Output, State, callback, ctx, dcc, html, no_update
 from sqlalchemy.exc import SQLAlchemyError
 
 from alerta_temprana import formato
@@ -38,6 +45,7 @@ from alerta_temprana.ui.diseno import (
     etiqueta_nivel,
     ruta_ficha,
 )
+from alerta_temprana.ui.seguimiento import boton_guardar, desplegable_estado, guardar_estado
 
 COLUMNAS_TABLA: dict[str, str] = {
     "codigo_estudiante": "Código",
@@ -49,6 +57,9 @@ COLUMNAS_TABLA: dict[str, str] = {
     "ficha": "Ficha",  # enlace «Ver ficha» (HU-006)
 }
 VER_FICHA = "Ver ficha"
+GUARDAR = "Guardar"
+ID_ESTADO = "estado-alerta"  # desplegable de cada fila: {"type": ID_ESTADO, "index": id_alerta}
+ID_GUARDAR = "guardar-estado"  # botón de cada fila: {"type": ID_GUARDAR, "index": id_alerta}
 ETIQUETA_TURNO = {"diurno": "Diurno", "nocturno": "Nocturno"}
 FILTROS = ("filtro-carrera", "filtro-turno", "filtro-nivel", "filtro-estado")
 
@@ -80,6 +91,7 @@ def _filtro(id_: str, etiqueta: str, opciones: list[dict], marcador: str, multip
 def filtros() -> html.Div:
     carreras = sorted(CARRERA.items(), key=lambda par: par[1])
     return html.Div(
+        id="filtros-listado",
         style={**ESTILO_TARJETA, "display": "flex", "flexWrap": "wrap", "gap": "16px"},
         children=[
             _filtro("filtro-carrera", "Carrera", [{"label": n, "value": c} for c, n in carreras], "Todas"),
@@ -107,12 +119,15 @@ def filtros() -> html.Div:
 
 
 def contenido() -> list:
+    # Cada contenedor de primer nivel tiene id propio (ver diseno.py, «ids de primer nivel»)
     return [
         filtros(),
         html.Div(id="tarjetas-listado", style={"display": "flex", "flexWrap": "wrap", "gap": "20px"}),
         html.Div(
+            id="contenedor-listado",
             style=ESTILO_TARJETA,
             children=[
+                html.Div(id="mensaje-estado-listado"),  # confirmación del cambio de estado (HU-007)
                 html.Div(id="cantidad-alertas", style={"color": COLOR_TEXTO_SECUNDARIO, "marginBottom": "8px"}),
                 html.Div(
                     id="contenedor-tabla-alertas",
@@ -158,6 +173,18 @@ def texto_cantidad(total: int) -> str:
     return "1 alerta" if total == 1 else f"{formato.entero(total)} alertas"
 
 
+def control_estado(alerta: dict) -> html.Div:
+    """Desplegable con el estado actual y «Guardar» (HU-007)."""
+    id_alerta = alerta["id_alerta"]
+    return html.Div(
+        style={"display": "flex", "alignItems": "center", "gap": "8px"},
+        children=[
+            desplegable_estado({"type": ID_ESTADO, "index": id_alerta}, alerta["estado"], ancho="190px"),
+            boton_guardar({"type": ID_GUARDAR, "index": id_alerta}, GUARDAR, relleno="6px 12px"),
+        ],
+    )
+
+
 def _celda(alerta: dict, columna: str):
     if columna == "nivel":
         return etiqueta_nivel(alerta["nivel"])
@@ -166,7 +193,7 @@ def _celda(alerta: dict, columna: str):
     if columna == "turno":
         return ETIQUETA_TURNO[alerta["turno"]]
     if columna == "estado":
-        return ETIQUETA_ESTADO[alerta["estado"]]
+        return control_estado(alerta)
     if columna == "ficha":
         return dcc.Link(VER_FICHA, href=ruta_ficha(alerta["id_alerta"]))  # sin recargar la página
     return alerta[columna]
@@ -213,3 +240,54 @@ def actualizar_listado(carreras, turno, niveles, estados, _usuario, _estado):
         return [], "", [mensaje]
     resumen = resumir_alertas(alertas)
     return tarjetas(resumen), texto_cantidad(resumen["total"]), filas_tabla(alertas, con_filtros)
+
+
+def alerta_a_guardar(disparador, clics, ids: list[dict], valores: list) -> tuple[int, str | None] | None:
+    """(id_alerta, estado elegido) del botón que se apretó, o None si el callback se disparó
+    porque la tabla se volvió a armar (los botones nuevos llegan con 0 clics).
+
+    `disparador` es el id del botón y `clics`, sus clics."""
+    if not isinstance(disparador, dict) or not clics:
+        return None
+    id_alerta = disparador["index"]
+    elegido = {i["index"]: v for i, v in zip(ids, valores, strict=True)}
+    if id_alerta not in elegido:
+        return None
+    return id_alerta, elegido[id_alerta]
+
+
+def resumen_visible(alertas: list[dict], ids_visibles: list[int]) -> dict[str, int]:
+    """Contadores de las tarjetas sobre las alertas que muestra la tabla (decisión del 07/11),
+    con su estado actual."""
+    visibles = set(ids_visibles)
+    return resumir_alertas([a for a in alertas if a["id_alerta"] in visibles])
+
+
+def tarjetas_actualizadas(ids_visibles: list[int]) -> list[html.Div]:
+    with obtener_fabrica_sesiones()() as sesion:
+        alertas = consultar_alertas(sesion)
+    return tarjetas(resumen_visible(alertas, ids_visibles))
+
+
+@callback(
+    Output("mensaje-estado-listado", "children"),
+    Output("tarjetas-listado", "children", allow_duplicate=True),
+    Input({"type": ID_GUARDAR, "index": ALL}, "n_clicks"),
+    State({"type": ID_ESTADO, "index": ALL}, "id"),
+    State({"type": ID_ESTADO, "index": ALL}, "value"),
+    State("usuario-prueba", "value"),
+    prevent_initial_call=True,
+)
+def guardar_desde_listado(_clics, ids, valores, usuario):
+    clics_disparador = ctx.triggered[0]["value"] if ctx.triggered else None
+    elegida = alerta_a_guardar(ctx.triggered_id, clics_disparador, ids, valores)
+    if elegida is None:
+        return no_update, no_update
+    id_alerta, estado = elegida
+    guardado = guardar_estado(id_alerta, estado, usuario)
+    if guardado.resultado is None or not guardado.resultado.registrado:
+        return guardado.mensaje, no_update
+    try:
+        return guardado.mensaje, tarjetas_actualizadas([i["index"] for i in ids])
+    except SQLAlchemyError:
+        return guardado.mensaje, no_update

@@ -325,8 +325,12 @@ def test_probabilidad_con_coma_decimal_y_textos_de_la_fila():
     fila = listado.filas_tabla([_alerta(estado="en_acompanamiento", turno="nocturno")])[0]
     texto = _texto(fila)
     assert "0,91" in texto and "0.91" not in texto
-    for esperado in ("EST-7F3A21C4", "Enfermería", "Nocturno", "Alto", "En acompañamiento"):
+    for esperado in ("EST-7F3A21C4", "Enfermería", "Nocturno", "Alto"):
         assert esperado in texto
+    # Desde HU-007 el estado es un desplegable con el estado actual y «En acompañamiento» como etiqueta
+    (desplegable,) = [c for c in _componentes(fila) if type(c).__name__ == "Dropdown"]
+    assert desplegable.value == "en_acompanamiento"
+    assert {"label": "En acompañamiento", "value": "en_acompanamiento"} in desplegable.options
 
 
 def test_tabla_no_muestra_datos_identificatorios():

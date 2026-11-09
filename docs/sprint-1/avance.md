@@ -23,6 +23,8 @@ terminar cada historia, sumar una fila. Puntos totales: 45.
 | 09/11 | HU-005 | Terminada | 34 | 11 | Criterios 1 a 4 cumplidos (revisión con evidencia); verificación manual del listado y de la navegación en verde (Facundo). Sin filtro por defecto (modificación de P3, observación 7 del tutor); 529 alertas con las tres cargas (alto 137, medio 131, bajo 261). 244 pruebas en verde |
 | 09/11 | HU-006 (6.3) | En progreso | 34 | 11 | Ficha en `/ficha/<id_alerta>` desde «Ver ficha» del listado: probabilidad, nivel, carrera y turno, cálculo (fecha y hora · modelo), los 5 factores con texto comprensible, barra y sentido, el aviso del criterio 4 y el seguimiento como texto. `GET /api/alertas/{id}`. Un factor que no corresponde al momento no se muestra: mensaje controlado y detalle en el registro. Cuenta como pantalla de Coordinación y Tutor/a (navegación del 09/11). Con inscripción y cierre_1s, las fichas de los 6 casos coinciden con el Anexo. Criterio 5 no verificado (cuestionario no aplicado). 277 pruebas en verde. Falta: verificación manual, `/revisar-hu` y commit |
 | 09/11 | HU-006 | Terminada | 42 | 3 | Criterios 1 a 4 cumplidos (revisión con evidencia); verificación manual de la ficha, la navegación y la API en verde, con la captura de la Figura 7 (Facundo). Criterio 5 no verificado: el cuestionario no se aplica (decisión del 05/11), se informa como no evaluado, igual que HU-004, criterio 5. Las fichas de los 6 casos del Anexo coinciden con la pantalla (con inscripción y cierre_1s). 277 pruebas en verde |
+| 09/11 | HU-007 (7.1 y 7.2) | En progreso | 42 | 3 | Criterios 4 a 6 del Word (correcciones del tutor) copiados en `HU-007.md`; decisión del 09/11 en `08-decisiones.md`. `cambiar_estado` (solo Coordinación y Tutor/a; ALERTA + CAMBIO_ESTADO en una transacción; mismo estado no registra nada; se puede volver a «pendiente»), `POST /api/alertas/{id}/estado` e historial en `GET /api/alertas/{id}`. Desplegable y «Guardar» en cada fila del listado (al guardar se actualizan el mensaje y las tarjetas, no la tabla) y «Guardar estado» con último cambio en la ficha, en hora argentina. Criterios 4 a 6 probados con `cambiar_estado` desde la inscripción, con las fixtures y con los 885 estudiantes (sigue 283, baja 277, vuelve 16, nueva 53) y la recarga de cierre_2s. Medición con 529 alertas: quitar un filtro tarda 2,4–2,7 s (antes 0,6 s). Corregido un render viejo de Dash 3.4 (ids en los contenedores de primer nivel). 312 pruebas en verde. Falta: verificación manual, `/revisar-hu` y commit |
+| 09/11 | HU-007 | Terminada | 45 | 0 | Criterios 1 a 6 cumplidos (revisión con evidencia; 4 a 6 por la regla P3, probados con `cambiar_estado` desde la inscripción, con las fixtures y con los 885 estudiantes, más la recarga del mismo momento); verificación manual de los 11 pasos en verde, sin errores en la consola (Facundo). El registro de quién y cuándo queda en CAMBIO_ESTADO. Capturas finales de las Figuras 6 y 7: pendientes. 312 pruebas en verde. **Sprint 1: 45 de 45 puntos** |
 
 ### Verificación manual de la pantalla de carga (HU-001)
 
@@ -178,6 +180,53 @@ Resultado (09/11, Facundo): **los 8 pasos pasaron**, incluidas la navegación co
 abierta, las direcciones escritas a mano, la API y la captura de la Figura 7 (ficha de
 EST-932B2E48 con «Tutor/a» en la barra superior y el aviso visible).
 
+### Verificación manual del estado de seguimiento (HU-007)
+
+Con la base de desarrollo con las tres cargas (la misma de HU-005 y HU-006) y
+`uvicorn alerta_temprana.app:app --reload`, en http://127.0.0.1:8000. **Los cambios de
+estado quedan guardados en esa base** (ALERTA y CAMBIO_ESTADO), que es la de la Demo. Las
+horas se ven en hora argentina.
+
+1. Elegir «Coordinación (coordinacion01)» → en el listado, la columna «Estado» tiene en cada
+   fila un desplegable («Pendiente», «Contactado», «En acompañamiento») y el botón
+   «Guardar». Todas las alertas están en «Pendiente»; la tarjeta «Pendientes de contacto»
+   dice 529.
+2. Elegir «Tutor/a (tutor01)». Filtrar Carrera = Educación Básica y Nivel = Alto; en la fila
+   de **EST-932B2E48**, elegir «Contactado» y «Guardar» → arriba de la tabla, en verde:
+   «Estado de EST-932B2E48 guardado: Contactado (tutor01, dd/mm/aaaa hh:mm).», con la hora
+   actual. «Pendientes de contacto» baja en 1; la tabla no se recarga y los filtros quedan.
+3. «Guardar» otra vez en la misma fila, sin cambiar el estado → «EST-932B2E48 ya estaba en
+   «Contactado»; no se registró ningún cambio.».
+4. Elegir «Coordinación (coordinacion01)» → la fila de EST-932B2E48 muestra «Contactado»
+   (criterio 3). Sumar el filtro Estado = Contactado → 1 alerta.
+5. «Ver ficha» de EST-932B2E48 (`/ficha/294`) → arriba, «← Volver al listado». Sección
+   «Seguimiento»: «Estado» con el desplegable en «Contactado», «Guardar estado», «Alerta
+   creada el 08/11/2026» y «Último cambio: Pendiente → Contactado, por tutor01, el dd/mm/aaaa
+   hh:mm».
+6. Elegir «En acompañamiento» y «Guardar estado» → mensaje «Estado de EST-932B2E48 guardado:
+   En acompañamiento (coordinacion01, …).» y el último cambio se actualiza. La página no
+   cambia: sigue «← Volver al listado» arriba y no aparecen los filtros del listado.
+7. «← Volver al listado» → la fila de EST-932B2E48 dice «En acompañamiento».
+8. Elegir «Área de Sistemas (sistemas01)» → pasa a «Carga de datos» (navegación del 09/11).
+9. API, en PowerShell:
+   - `Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/api/alertas/294/estado -ContentType "application/json" -Body '{"estado":"contactado","usuario":"sistemas01"}'`
+     → error 403 con el motivo (rol `area_sistemas`). Con `"usuario":"secretaria01"`, también 403.
+   - El mismo pedido con `"estado":"cerrado","usuario":"tutor01"` → 422; con la alerta
+     `99999` → 404.
+   - `curl.exe http://127.0.0.1:8000/api/alertas/294` → `estado` `en_acompanamiento` y
+     `cambios_estado` con los 2 cambios (usuario, estados y fecha).
+10. En ningún paso aparecen errores en la consola del navegador (F12 → Consola).
+11. Capturas finales: **Figura 6**, el listado sin filtros con «Coordinación» y la columna
+    de estado visible; **Figura 7**, la ficha de EST-932B2E48 con «Tutor/a», con las tarjetas,
+    los factores, el aviso y la sección «Seguimiento» con el desplegable.
+
+Con 529 alertas, cambiar o quitar un filtro tarda unos 2 a 3 segundos (medición del 09/11
+en Chrome: 2,4–2,7 s para mostrar las 529 filas, frente a 0,6 s sin desplegables). Guardar
+no vuelve a armar la tabla.
+
+Resultado (09/11, Facundo): **los 11 pasos pasaron**, sin errores en la consola del
+navegador. Las capturas finales de las Figuras 6 y 7 se sacan después.
+
 ## Estado de las historias
 
 | ID | Puntos | Estado | Commit |
@@ -188,4 +237,4 @@ EST-932B2E48 con «Tutor/a» en la barra superior y el aviso visible).
 | HU-004 | 3 | Terminada | «HU-003 y HU-004: recálculo automático del riesgo…» (09/11) |
 | HU-005 | 5 | Terminada | «HU-005: listado de alertas con orden, filtros y navegación por usuario…» (09/11) |
 | HU-006 | 8 | Terminada | «HU-006: ficha del estudiante con los factores que más pesan…» (09/11) |
-| HU-007 | 3 | Por hacer | |
+| HU-007 | 3 | Terminada | «HU-007: registro del estado de seguimiento con historial…» (09/11) |

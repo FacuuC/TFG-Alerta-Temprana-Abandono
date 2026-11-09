@@ -67,6 +67,12 @@ def seccion_de(ruta: str | None) -> str | None:
     return RUTA_LISTADO if id_alerta_de(ruta) is not None else ruta
 
 
+# Ids de primer nivel: cada contenedor de primer nivel del contenido de una pantalla tiene un
+# id propio, distinto en cada pantalla. Dash 3.4 reutiliza en el navegador lo dibujado en la
+# misma posición cuando los dos componentes no tienen id: al pasar del listado a la ficha y
+# guardar un estado, volvían a aparecer los filtros del listado en lugar de «Volver al
+# listado», aunque el layout interno era el correcto (HU-007, 09/11).
+
 # Menú por rol (ruta, texto del enlace). La primera es la pantalla inicial del rol.
 MENU_POR_ROL: dict[str, list[tuple[str, str]]] = {
     ROL_AREA_SISTEMAS: [(RUTA_CARGA, "Carga de datos")],
