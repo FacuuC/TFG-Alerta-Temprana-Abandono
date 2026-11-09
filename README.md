@@ -64,7 +64,7 @@ desde la carpeta del repositorio.
 **1. Clonar el repositorio**
 
 ```powershell
-git clone <URL del repositorio> alerta-temprana
+git clone https://github.com/FacuuC/TFG-Alerta-Temprana-Abandono.git alerta-temprana
 cd alerta-temprana
 ```
 
