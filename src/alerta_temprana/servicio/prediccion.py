@@ -22,6 +22,7 @@ from collections import Counter
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from decimal import Decimal
+from typing import cast
 
 import pandas as pd
 from sqlalchemy import func, insert, select, update
@@ -136,7 +137,10 @@ def estimar(modelo: ModeloCargado, datos: pd.DataFrame) -> list[Estimacion]:
                 codigo_estudiante=str(codigo),
                 probabilidad=float(probabilidad),
                 nivel=clasificar(float(probabilidad), modelo.umbral_alto, modelo.umbral_medio),
-                factores=[(f, valor_como_texto(datos.at[codigo, f.variable])) for f in factores],
+                # Las columnas son numéricas (int64 o float, ver armar_datos)
+                factores=[
+                    (f, valor_como_texto(cast(float, datos.at[codigo, f.variable]))) for f in factores
+                ],
             )
         )
     return estimaciones

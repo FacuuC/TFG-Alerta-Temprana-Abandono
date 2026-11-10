@@ -65,7 +65,9 @@ def registrar_modelos(sesion: Session, raiz_modelos: Path) -> list[str]:
     """Agrega a MODELO las versiones de `modelos/` que falten. Devuelve las agregadas
     («cierre_1s v1.0»). Se puede ejecutar varias veces: no duplica ni modifica filas."""
     momentos = {m.value for m in V.Momento}
-    existentes = set(sesion.execute(select(Modelo.momento, Modelo.version)).all())
+    existentes: set[tuple[str, str]] = {
+        (m, v) for m, v in sesion.execute(select(Modelo.momento, Modelo.version))
+    }
     habilitados = set(sesion.scalars(select(Modelo.momento).where(Modelo.habilitado)))
     agregados: list[str] = []
     for ruta in sorted(Path(raiz_modelos).glob("*/v*/metadatos.json")):
